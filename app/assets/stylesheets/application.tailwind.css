@@ -1,0 +1,25 @@
+@import "tailwindcss";
+@plugin '@tailwindcss/typography';
+@import "basecoat-css";
+@import "./fonts";
+
+.flash {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  width: fit-content;
+  z-index: 50;
+  animation: wiggle 0.5s ease-in-out;
+}
+
+[data-selection-target="card"].selected {
+  @apply border-violet-500 bg-violet-500/10 ring-1 ring-violet-500;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-2deg); }
+  40% { transform: rotate(2deg); }
+  60% { transform: rotate(-2deg); }
+  80% { transform: rotate(2deg); }
+}

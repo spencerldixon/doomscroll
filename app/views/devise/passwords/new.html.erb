@@ -1,0 +1,23 @@
+<%= form_with model: resource, as: resource_name, url: password_path(resource_name), method: :post do |f| %>
+  <div class="card">
+    <header>
+      <h2>Forgot your password?</h2>
+    </header>
+    <section>
+      <div class="form grid gap-6">
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div class="grid gap-2">
+          <%= f.label :email %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+        </div>
+
+        <%= f.submit "Send me reset password instructions", class: "btn w-full" %>
+
+        <div class="text-center">
+          <%= render "devise/shared/links" %>
+        </div>
+      </div>
+    </section>
+  </div>
+<% end %>

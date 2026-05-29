@@ -1,0 +1,36 @@
+<%= form_with model: resource, as: resource_name, url: password_path(resource_name), method: :put do |f| %>
+  <div class="card">
+    <header>
+      <h2>Change your password</h2>
+    </header>
+    <section>
+      <div class="form grid gap-6">
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <%= f.hidden_field :reset_password_token %>
+
+        <div class="grid gap-2">
+          <div class="flex justify-between items-center">
+            <%= f.label :password, "New password" %>
+            <% if @minimum_password_length %>
+              <em class="text-xs">(<%= @minimum_password_length %> characters minimum)</em>
+            <% end %>
+          </div>
+
+          <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
+        </div>
+
+        <div class="grid gap-2">
+          <%= f.label :password_confirmation, "Confirm new password" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+        </div>
+
+        <%= f.submit "Change my password", class: "btn w-full" %>
+
+        <div class="text-center">
+          <%= render "devise/shared/links" %>
+        </div>
+      </div>
+    </section>
+  </div>
+<% end %>

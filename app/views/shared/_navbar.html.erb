@@ -1,0 +1,89 @@
+<% next_issue = current_user.next_issue_date %>
+<% deadline = next_issue ? next_issue.to_time.change(hour: 6).iso8601 : nil %>
+
+<header class="bg-background sticky inset-x-0 top-0 isolate flex shrink-0 items-center border-b z-10">
+  <div class="flex w-full items-center gap-6 py-3 px-6">
+
+    <%# Logo %>
+    <%= link_to authenticated_root_path, class: "font-bold tracking-tight text-sm shrink-0 font-mono" do %>
+      DOOMSCROLL<span class="text-lime-400">.</span>PRESS
+    <% end %>
+
+    <%# Nav links %>
+    <nav class="flex items-center gap-1">
+      <%= link_to "#", class: "px-3 py-1.5 text-sm rounded-md hover:bg-accent transition-colors #{'bg-accent font-medium' if current_page?(dashboard_index_path)}" do %>
+        Issues
+      <% end %>
+      <%= link_to after_signup_path(:name), class: "px-3 py-1.5 text-sm rounded-md hover:bg-accent transition-colors" do %>
+        Zine Settings
+      <% end %>
+    </nav>
+
+    <%# Countdown %>
+    <% if deadline %>
+      <div class="ml-auto flex items-center gap-3">
+        <div
+          class="flex items-center gap-1.5 font-mono text-xs"
+          data-controller="countdown"
+          data-countdown-deadline-value="<%= deadline %>"
+        >
+          <span class="text-muted-foreground">next issue</span>
+          <span class="flex items-center gap-0.5">
+            <span data-countdown-target="days" class="tabular-nums">--</span><span class="text-muted-foreground">d</span>
+            <span data-countdown-target="hours" class="tabular-nums ml-1">--</span><span class="text-muted-foreground">h</span>
+            <span data-countdown-target="minutes" class="tabular-nums ml-1">--</span><span class="text-muted-foreground">m</span>
+            <span data-countdown-target="seconds" class="tabular-nums ml-1">--</span><span class="text-muted-foreground">s</span>
+          </span>
+        </div>
+
+        <%# User menu %>
+        <div id="user-menu" class="dropdown-menu">
+          <button type="button"
+                  id="user-menu-trigger"
+                  aria-haspopup="menu"
+                  aria-controls="user-menu-menu"
+                  aria-expanded="false"
+                  class="btn-ghost text-sm font-medium">
+            <%= current_user.email %>
+          </button>
+          <div id="user-menu-popover" data-popover aria-hidden="true" class="min-w-44" data-side="left" data-align="start">
+            <div role="menu" id="user-menu-menu" aria-labelledby="user-menu-trigger">
+              <%= link_to edit_user_registration_path, role: "menuitem", class: "cursor-pointer" do %>
+                My Account
+              <% end %>
+              <hr role="separator" />
+              <%= button_to destroy_user_session_path, method: :delete, role: "menuitem", class: "cursor-pointer w-full text-left" do %>
+                Log out
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="ml-auto">
+        <div id="user-menu" class="dropdown-menu">
+          <button type="button"
+                  id="user-menu-trigger"
+                  aria-haspopup="menu"
+                  aria-controls="user-menu-menu"
+                  aria-expanded="false"
+                  class="btn-ghost text-sm font-medium">
+            <%= current_user.email %>
+          </button>
+          <div id="user-menu-popover" data-popover aria-hidden="true" class="min-w-44" data-side="left" data-align="start">
+            <div role="menu" id="user-menu-menu" aria-labelledby="user-menu-trigger">
+              <%= link_to edit_user_registration_path, role: "menuitem", class: "cursor-pointer" do %>
+                My Account
+              <% end %>
+              <hr role="separator" />
+              <%= button_to destroy_user_session_path, method: :delete, role: "menuitem", class: "cursor-pointer w-full text-left" do %>
+                Log out
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+</header>

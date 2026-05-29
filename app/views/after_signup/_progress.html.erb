@@ -1,0 +1,5 @@
+<div class="flex items-center gap-2">
+  <% 3.times do |i| %>
+    <div class="h-1.5 flex-1 rounded-full <%= i < step ? 'bg-lime-400' : 'bg-border' %>"></div>
+  <% end %>
+</div>

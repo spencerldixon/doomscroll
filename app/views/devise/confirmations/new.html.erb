@@ -1,0 +1,23 @@
+<%= form_with model: resource, as: resource_name, url: confirmation_path(resource_name), method: :post do |f| %>
+  <div class="card">
+    <header>
+      <h2>Resend confirmation email</h2>
+    </header>
+    <section>
+      <div class="form grid gap-6">
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div class="grid gap-2">
+          <%= f.label :email %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email) %>
+        </div>
+
+        <%= f.submit "Resend confirmation instructions", class: "btn w-full" %>
+
+        <div class="text-center">
+          <%= render "devise/shared/links" %>
+        </div>
+      </div>
+    </section>
+  </div>
+<% end %>

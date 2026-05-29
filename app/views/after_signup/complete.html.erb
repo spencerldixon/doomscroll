@@ -1,0 +1,51 @@
+<% content_for :body do %>
+<body class="min-h-screen bg-background flex flex-col items-center justify-center px-6 py-16" data-controller="confetti">
+  <%= render "shared/flash" %>
+
+  <div class="w-full max-w-xl space-y-6">
+
+    <h1 class="text-6xl font-semibold tracking-tight">
+      <%= current_user.zine_preference.zine_name %>
+    </h1>
+
+    <%# The message %>
+    <div class="space-y-2">
+      <p class="text-3xl font-semibold leading-snug tracking-tight">
+      Every <span class="text-lime-400 bg-slate-900 px-2"><%= current_user.next_issue_day %></span> we'll drop your zine in your inbox at <%= current_user.email %>.
+      </p>
+      <p class="text-muted-foreground">
+      Print it, fold it, take a photo, send it to us 
+      </p>
+    </div>
+
+    <%# Countdown %>
+    <% if current_user.next_issue_date %>
+      <p class="text-muted-foreground">
+        Your first issue lands on <span class="text-foreground font-medium"><%= current_user.next_issue_date.strftime("%A, %B %-d") %></span>, <%= current_user.days_until_next_issue == 1 ? "that's tomorrow" : "in #{current_user.days_until_next_issue} days" %>.
+      </p>
+    <% end %>
+
+    <%# Feeds as pills %>
+    <div class="flex flex-wrap gap-2">
+      <% current_user.feeds.order(:name).each do |feed| %>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-xs font-medium">
+          <% if feed.icon_url.present? %>
+            <img src="<%= feed.icon_url %>" class="w-3.5 h-3.5 rounded-full shrink-0" alt="">
+          <% else %>
+            <img src="https://www.google.com/s2/favicons?domain=<%= URI.parse(feed.url).host rescue feed.url %>&sz=32" class="w-3.5 h-3.5 rounded-full shrink-0" alt="">
+          <% end %>
+          <%= feed.name %>
+        </span>
+      <% end %>
+    </div>
+
+    <%# CTA %>
+    <div class="pt-2">
+      <%= link_to authenticated_root_path, class: "btn-primary px-8 py-3 rounded-md font-semibold" do %>
+        Let's go baby &rarr;
+      <% end %>
+    </div>
+
+  </div>
+</body>
+<% end %>

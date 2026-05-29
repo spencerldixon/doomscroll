@@ -1,0 +1,39 @@
+<% content_for :body do %>
+<body class="min-h-screen bg-background flex flex-col">
+  <%= render "shared/flash" %>
+
+  <div class="flex flex-col items-center justify-center flex-1 px-4 py-16">
+    <div class="w-full max-w-md space-y-8">
+      <%= render "after_signup/progress", step: 1 %>
+
+      <div class="space-y-2">
+        <h1 class="text-3xl font-semibold">Name your zine</h1>
+        <p class="text-muted-foreground">Give your personal digest a name</p>
+      </div>
+
+      <%= form_with url: wizard_path, method: :put, class: "space-y-6" do |f| %>
+        <div class="flex flex-col gap-3">
+          <label class="label" for="zine_name">Zine name</label>
+
+          <input
+            id="zine_name"
+            type="text"
+            name="zine_name"
+            value="<%= @zine_preference.zine_name %>"
+            placeholder="Bob's Morning Doomscroll"
+            class="w-full input"
+            required
+            autofocus
+          >
+        </div>
+
+        <div class="flex justify-end">
+          <button type="submit" class="btn">
+            Next &rarr;
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</body>
+<% end %>

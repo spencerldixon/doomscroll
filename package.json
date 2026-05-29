@@ -1,0 +1,18 @@
+{
+  "name": "app",
+  "private": true,
+  "scripts": {
+    "build": "bun bun.config.js",
+    "build:css": "bunx @tailwindcss/cli -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.2.0",
+    "@hiseb/confetti": "^2.1.0",
+    "@hotwired/stimulus": "^3.2.2",
+    "@hotwired/turbo-rails": "^8.0.23",
+    "@tailwindcss/cli": "^4.3.0",
+    "@tailwindcss/typography": "^0.5.19",
+    "basecoat-css": "^0.3.11",
+    "tailwindcss": "^4.3.0"
+  }
+}
