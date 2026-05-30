@@ -4,9 +4,12 @@ class CreateFeeds < ActiveRecord::Migration[8.1]
       t.string :name
       t.string :url
       t.text :description
-      t.string :icon_url
-
+      t.boolean :private, default: true, null: false
+      t.string :domain
       t.timestamps
     end
+
+    add_index :feeds, :url, unique: true
+    add_index :feeds, :domain
   end
 end

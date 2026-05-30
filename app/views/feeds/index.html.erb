@@ -1,0 +1,50 @@
+<%= render "shared/header", title: "Feeds", subtitle: "Manage your feed subscriptions" do %>
+<% end %>
+
+<div class="max-w-5xl mx-auto px-4 space-y-12">
+
+  <div class="space-y-4">
+    <h2 class="text-xl font-semibold vt">Your Feeds</h2>
+    <% if @user_feeds.empty? %>
+      <p class="text-muted-foreground text-sm">No feeds yet. Subscribe below or add a custom feed.</p>
+    <% else %>
+      <div class="space-y-2" id="user_feeds_list">
+        <% @user_feeds.each do |user_feed| %>
+          <%= render "feeds/user_feed_item", feed: user_feed.feed %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="space-y-4">
+    <h2 class="text-xl font-semibold vt">Add a custom feed</h2>
+    <p class="text-muted-foreground text-sm">Paste any RSS or Atom URL. We'll fetch the details in the background.</p>
+    <%= form_with url: feeds_path, method: :post, class: "flex gap-3" do |f| %>
+      <input type="url" name="url" placeholder="https://example.com/feed.xml" class="input flex-1" required>
+      <button type="submit" class="btn-primary">Add</button>
+    <% end %>
+  </div>
+
+  <div class="space-y-4" data-controller="filter">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <h2 class="text-xl font-semibold vt">Discover</h2>
+      <input
+        data-filter-target="input"
+        data-action="input->filter#filter"
+        type="text"
+        placeholder="Search feeds..."
+        class="input w-full sm:w-64"
+      >
+    </div>
+    <% if @curated_feeds.empty? %>
+      <p class="text-muted-foreground text-sm">No curated feeds available yet.</p>
+    <% else %>
+      <div class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3">
+        <% @curated_feeds.each do |feed| %>
+          <%= render "feeds/feed_card", feed: feed, subscribed: @user_feed_ids.include?(feed.id) %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+</div>

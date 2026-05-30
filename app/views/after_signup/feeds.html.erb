@@ -20,18 +20,22 @@
           class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-3 mb-8"
         >
           <% @feeds.each do |feed| %>
+            <% subscribed = @user_feed_ids.include?(feed.id) %>
             <div
               data-selection-target="card"
               data-id="<%= feed.id %>"
               data-action="click->selection#toggle"
-              class="flex flex-col items-center gap-2 p-3 border border-border rounded-lg cursor-pointer hover:border-violet-400 transition-all select-none aspect-[3/4]"
+              class="flex flex-col items-center gap-2 p-3 border border-border rounded-lg cursor-pointer hover:border-violet-400 transition-all select-none aspect-[3/4] <%= 'selected' if subscribed %>"
             >
+            <% if subscribed %>
+              <input type="hidden" name="feed_ids[]" value="<%= feed.id %>" data-selection-target="input">
+            <% end %>
               <div class="flex-1 flex items-center justify-center w-full">
                 <% if feed.icon_url.present? %>
                   <img src="<%= feed.icon_url %>" alt="<%= feed.name %>" class="w-10 h-10 rounded object-contain">
                 <% else %>
                   <img
-                    src="https://www.google.com/s2/favicons?domain=<%= URI.parse(feed.url).host rescue feed.url %>&sz=64"
+                    src="https://www.google.com/s2/favicons?domain=<%= feed.domain || URI.parse(feed.url).host %>&sz=64"
                     alt="<%= feed.name %>"
                     class="w-10 h-10 rounded object-contain"
                   >
@@ -39,7 +43,7 @@
               </div>
               <div class="w-full space-y-0.5 text-center">
                 <p class="text-xs font-semibold truncate leading-tight"><%= feed.name %></p>
-                <p class="text-[10px] text-muted-foreground truncate"><%= URI.parse(feed.url).host rescue feed.url %></p>
+                <p class="text-[10px] text-muted-foreground truncate"><%= feed.domain || URI.parse(feed.url).host %></p>
                 <p class="text-[10px] text-muted-foreground line-clamp-2 leading-tight"><%= feed.description %></p>
               </div>
             </div>

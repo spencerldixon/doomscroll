@@ -33,6 +33,7 @@ gem "mission_control-jobs"
 gem "telegram-bot-ruby"
 gem "telegram-bot-ruby"
 gem "wicked"
+gem "ssrf_filter"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

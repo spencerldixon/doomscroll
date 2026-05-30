@@ -10,17 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_29_152201) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_29_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "feeds", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
+    t.string "domain"
     t.string "icon_url"
     t.string "name"
+    t.boolean "private", default: false, null: false
     t.datetime "updated_at", null: false
     t.string "url"
+    t.index ["domain"], name: "index_feeds_on_domain"
+    t.index ["url"], name: "index_feeds_on_url", unique: true
+  end
+
+  create_table "issues", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "number", null: false
+    t.datetime "published_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id", "number"], name: "index_issues_on_user_id_and_number", unique: true
+    t.index ["user_id"], name: "index_issues_on_user_id"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -192,6 +206,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_29_152201) do
     t.index ["user_id"], name: "index_zine_preferences_on_user_id", unique: true
   end
 
+  add_foreign_key "issues", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_one  :zine_preference, dependent: :destroy
   has_many :user_feeds, dependent: :destroy
   has_many :feeds, through: :user_feeds
+  has_many :issues, dependent: :destroy
 
   attr_accessor :terms_and_conditions
 

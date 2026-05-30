@@ -34,14 +34,9 @@
     <body>
       <%= render "shared/flash" %>
 
-      <main id="content">
+      <main class="p-6 xl:p-10 mx-auto max-w-7xl">
         <%= render "shared/navbar" %>
-
-        <div class="p-6 xl:p-10">
-          <main class="mx-auto w-full max-w-7xl">
-            <%= yield %>
-          </main>
-        </div>
+        <%= yield %>
       </main>
     </body>
   <% end %>

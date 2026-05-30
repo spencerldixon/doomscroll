@@ -1,0 +1,273 @@
+.issue-pages {
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.sheet {
+  width: 297mm;
+  height: 210mm;
+  background: white;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.sheet::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 8%;
+  height: 84%;
+  width: 1px;
+  background: #ddd;
+  pointer-events: none;
+}
+
+.half {
+  width: 148.5mm;
+  height: 210mm;
+  overflow: hidden;
+  flex-shrink: 0;
+  padding: 28px 28px 20px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.half--cover {
+  position: relative;
+}
+
+/* Cover artwork */
+.cover-artwork {
+  flex: 1;
+  overflow: hidden;
+  margin: 12px 0;
+  min-height: 0;
+}
+
+.half--back-cover {
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.half__inner {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+  gap: 14px;
+}
+
+/* Typography helpers */
+.zine-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.zine-title {
+  font-family: 'VT323', monospace;
+  line-height: 1;
+  color: #000;
+}
+
+.zine-rule {
+  width: 48px;
+  height: 2px;
+  background: #000;
+}
+
+.zine-footer {
+  margin-top: auto;
+  font-family: 'Space Mono', monospace;
+  font-size: 6px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+/* TOC */
+.toc-heading {
+  border-bottom: 2px solid #000;
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+}
+
+.toc-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px dotted #ddd;
+  padding: 3.5px 0;
+}
+
+.toc-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 6px;
+  color: #aaa;
+  min-width: 14px;
+}
+
+.toc-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+}
+
+.toc-page {
+  font-family: 'Space Mono', monospace;
+  font-size: 6px;
+  color: #aaa;
+}
+
+/* Article pages */
+.article-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #000;
+}
+
+.article-header__label {
+  font-family: 'Space Mono', monospace;
+  font-size: 6px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.article-header__page {
+  font-family: 'Space Mono', monospace;
+  font-size: 6px;
+  color: #aaa;
+}
+
+.article-headline {
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  color: #000;
+}
+
+.article-body {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  line-height: 1.75;
+  color: #444;
+  flex: 1;
+  columns: 2;
+  column-gap: 12px;
+  overflow: hidden;
+}
+
+.article-body p {
+  margin-bottom: 8px;
+}
+
+.article-source {
+  margin-top: 10px;
+  padding-top: 7px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+}
+
+.article-source span {
+  font-family: 'Space Mono', monospace;
+  font-size: 5.5px;
+  color: #bbb;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+/* Credits */
+.credits-heading {
+  border-bottom: 2px solid #000;
+  padding-bottom: 6px;
+  margin-bottom: 18px;
+}
+
+.credits-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 6px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 4px;
+}
+
+.credits-value {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  margin-bottom: 18px;
+}
+
+.credits-source {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  color: #333;
+}
+
+.credits-footer {
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 5.5px;
+  color: #bbb;
+}
+
+/* Back cover */
+.back-cover__content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.back-cover__number {
+  font-family: 'VT323', monospace;
+  font-size: 110px;
+  line-height: 1;
+}
+
+.back-cover__name {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  margin-top: -14px;
+}
+
+/* Print */
+@media print {
+  @page { size: A4 landscape; margin: 0; }
+
+  html, body { margin: 0; padding: 0; background: white; }
+
+  .print-toolbar { display: none !important; }
+
+  .issue-pages {
+    padding: 0 !important;
+    gap: 0 !important;
+    background: white !important;
+  }
+
+  .sheet {
+    box-shadow: none !important;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .sheet::after { display: none; }
+}

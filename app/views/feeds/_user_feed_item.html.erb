@@ -1,0 +1,16 @@
+<div class="flex items-center justify-between p-3 border border-border rounded-lg">
+  <div class="flex items-center gap-3">
+    <img
+      src="https://www.google.com/s2/favicons?domain=<%= feed.domain || URI.parse(feed.url).host %>&sz=32"
+      alt="<%= feed.name %>"
+      class="w-6 h-6 rounded object-contain"
+    >
+    <div>
+      <p class="text-sm font-semibold"><%= feed.name %></p>
+      <p class="text-xs text-muted-foreground"><%= feed.domain || URI.parse(feed.url).host %></p>
+    </div>
+  </div>
+  <%= button_to user_feed_path(feed.id), method: :delete, class: "btn-outline text-xs py-1 px-3" do %>
+    Remove
+  <% end %>
+</div>

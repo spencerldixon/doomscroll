@@ -1,16 +1,15 @@
 Rails.application.routes.draw do
-  get "dashboard/index"
   authenticate :user, ->(user) { user.admin? } do
     mount MissionControl::Jobs::Engine, at: "/jobs"
   end
-  devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }  
-devise_scope :user do
+  devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
+  devise_scope :user do
     unauthenticated do
       root to: "devise/sessions#new"
     end
 
     authenticated do
-      root to: "dashboard#index", as: :authenticated_root
+      root to: "issues#index", as: :authenticated_root
     end
   end
 
@@ -21,6 +20,11 @@ devise_scope :user do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "after_signup/complete", to: "after_signup#complete", as: :after_signup_complete
   resources :after_signup, only: [:show, :update]
+
+  resources :issues, only: [:index, :show]
+  resource :preferences, only: [:show, :update]
+  resources :feeds, only: [:index, :create]
+  resources :user_feeds, only: [:create, :destroy], param: :feed_id
 
   get "up" => "rails/health#show", as: :rails_health_check
 

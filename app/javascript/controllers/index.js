@@ -7,9 +7,6 @@ import { application } from "./application"
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 
-import HelloController from "./hello_controller"
-application.register("hello", HelloController)
-
 import SelectionController from "./selection_controller"
 application.register("selection", SelectionController)
 
@@ -18,3 +15,6 @@ application.register("confetti", ConfettiController)
 
 import CountdownController from "./countdown_controller"
 application.register("countdown", CountdownController)
+
+import FilterController from "./filter_controller"
+application.register("filter", FilterController)

@@ -21,8 +21,8 @@ class ApplicationController < ActionController::Base
     redirect_to after_signup_path(:name) unless current_user.setup_complete?
   end
 
-  def after_sign_in_path_for(resource)
-    if resource.is_a?(User) && resource.zine_preference.nil?
+  def after_sign_in_path_for(user)
+    if user.zine_preference.nil?
       after_signup_path(:name)
     else
       authenticated_root_path

@@ -1,52 +1,54 @@
 <%= render "shared/header", title: "My account", subtitle: "Update your account settings" %>
 
-<%= form_with model: resource, as: resource_name, url: registration_path(resource_name), method: :put, class: "form grid gap-6" do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<section class="max-w-5xl mx-auto">
+  <%= form_with model: resource, as: resource_name, url: registration_path(resource_name), method: :put, class: "form grid gap-6" do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="grid gap-2">
-    <%= f.label :email %>
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+    <div class="grid gap-2">
+      <%= f.label :email %>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+    </div>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+      <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+    <% end %>
+
+    <div class="grid gap-2">
+      <div class="flex justify-between items-center">
+        <%= f.label :password %>
+        <i class="text-xs">(leave blank if you don't want to change it)</i>
+      </div>
+
+      <%= f.password_field :password, autocomplete: "new-password" %>
+
+      <% if @minimum_password_length %>
+        <em class="text-xs"><%= @minimum_password_length %> characters minimum</em>
+      <% end %>
+    </div>
+
+    <div class="grid gap-2">
+      <%= f.label :password_confirmation %>
+      <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+    </div>
+
+    <div class="grid gap-2">
+      <div class="flex justify-between items-center">
+        <%= f.label :current_password %>
+        <i class="text-xs">(we need your current password to confirm your changes)</i>
+      </div>
+      <%= f.password_field :current_password, autocomplete: "current-password" %>
+    </div>
+
+    <%= f.submit "Update", class: "btn w-fit" %>
   <% end %>
 
-  <div class="grid gap-2">
-    <div class="flex justify-between items-center">
-      <%= f.label :password %>
-      <i class="text-xs">(leave blank if you don't want to change it)</i>
-    </div>
-
-    <%= f.password_field :password, autocomplete: "new-password" %>
-
-    <% if @minimum_password_length %>
-      <em class="text-xs"><%= @minimum_password_length %> characters minimum</em>
-    <% end %>
+  <div class="card mt-12">
+    <header>
+      <h2>Delete my account</h2>
+      <p>This will permanently delete your account and remove your data. This cannot be undone.</p>
+    </header>
+    <section class="text-sm">
+      <%= button_to "Delete my account", registration_path(resource_name), data: { turbo_confirm: "Are you sure? Clicking \"OK\" will permanently delete your account and data, this action cannot be undone." }, method: :delete, class: "btn btn-destructive" %>
+    </section>
   </div>
-
-  <div class="grid gap-2">
-    <%= f.label :password_confirmation %>
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="grid gap-2">
-    <div class="flex justify-between items-center">
-      <%= f.label :current_password %>
-      <i class="text-xs">(we need your current password to confirm your changes)</i>
-    </div>
-    <%= f.password_field :current_password, autocomplete: "current-password" %>
-  </div>
-
-  <%= f.submit "Update", class: "btn w-fit" %>
-<% end %>
-
-<div class="card mt-12">
-  <header>
-    <h2>Delete my account</h2>
-    <p>This will permanently delete your account and remove your data. This cannot be undone.</p>
-  </header>
-  <section class="text-sm">
-    <%= button_to "Delete my account", registration_path(resource_name), data: { turbo_confirm: "Are you sure? Clicking \"OK\" will permanently delete your account and data, this action cannot be undone." }, method: :delete, class: "btn btn-destructive" %>
-  </section>
-</div>
+</section>

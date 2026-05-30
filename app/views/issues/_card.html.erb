@@ -1,0 +1,7 @@
+<%= link_to issue_path(issue), class: "border border-border rounded-lg overflow-hidden flex flex-col hover:border-foreground/30 transition-colors cursor-pointer" do %>
+  <div class="bg-muted aspect-[3/4] flex flex-col items-center justify-center p-6 gap-2">
+    <p class="text-xs font-mono uppercase tracking-widest text-muted-foreground">issue</p>
+    <p class="text-5xl font-bold" style="font-family: 'VT323', monospace;"><%= issue.number %></p>
+    <p class="text-xs text-muted-foreground"><%= issue.published_at.strftime("%B %-d, %Y") %></p>
+  </div>
+<% end %>
