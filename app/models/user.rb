@@ -37,9 +37,7 @@ class User < ApplicationRecord
 
     days_until = (zine_preference.delivery_day - Date.today.wday) % 7
 
-    return 7 if days_until == 0
-
-    days_until
+    days_until == 0 ? 7 : days_until
   end
 
   def next_issue_date
