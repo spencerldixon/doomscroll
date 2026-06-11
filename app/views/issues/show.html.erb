@@ -1,67 +1,88 @@
 <% content_for :title, "Issue ##{@issue.number}" %>
 
 <div class="issue-pages">
-  <%= render "issues/pages/cover_toc" %>
+  <%= render "issues/pages/cover_toc", articles: @articles %>
 
+  <section class="article-flow" data-paged-flow hidden>
+    <% @articles.each_slice(2).with_index do |article_pair, sheet_index| %>
+      <div class="paged-sheet-source">
+        <% article_pair.each_with_index do |article, side_index| %>
+          <% article_index = sheet_index * 2 + side_index %>
 
-  <%# Sheets 2–11: Article pairs %>
-  <% [
-    ["The Slow Collapse of Everything We Thought We Knew",    "Notes From the Edge of the Algorithm"],
-    ["What Happens When Nobody Is Watching",                  "The Last Interesting Thing on the Internet"],
-    ["A Brief History of Paying Attention",                   "Everything Is Fine and Other Lies We Tell Ourselves"],
-    ["The Noise and How to Live Inside It",                   "On Reading Things That Matter"],
-    ["The Quiet Revolution Nobody Noticed",                   "Dispatches From the Information Age"],
-    ["Why the Feed Never Stops",                              "Signal / Noise / Everything Else"],
-    ["The World as It Actually Is",                           "How We Got Here and Where Here Is"],
-    ["Fragments of a Larger Story",                           "The Art of Paying Selective Attention"],
-    ["What the Algorithm Doesn't Want You to Read",           "Things Worth Knowing About Things Worth Knowing"],
-    ["The Unfiltered Version",                                "End of Transmission"]
-  ].each_with_index do |pair, sheet_idx| %>
-    <div class="sheet">
-      <% pair.each_with_index do |headline, side| %>
-        <% article_num = sheet_idx * 2 + side + 1 %>
-        <div class="half">
+          <article class="paged-article">
+            <header class="paged-article__header">
 
-          <div class="article-header">
-            <span class="article-header__label">Article <%= article_num %></span>
-            <span class="article-header__page">p. <%= article_num + 2 %></span>
-          </div>
+              <%= render "issues/page_header", title: article["title"], feed_name: article["source"] %>
 
-          <p class="article-headline"><%= headline %></p>
-          <div class="article-body">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem aperiam.</p>
-            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est qui dolorem ipsum sit amet.</p>
-            <p>Ut labore et dolore magnam aliquam quaerat voluptatem. At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores excepturi sint.</p>
-            <p>Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore cum soluta nobis est eligendi.</p>
-          </div>
+              <h1 class="article-headline"><%= article["title"] %></h1>
+                <div class="article-meta">
+                    <span><%= article["author"] %></span>
+                    <span><%= article["published_at"] %></span>
+                </div>
+            </header>
 
-          <div class="text-xs flex justify-between items-center font-mono">
-            <span>Source placeholder</span>
-            <span><%= article_num + 2 %></span>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+            <div class="article-body">
+              <%= sanitize article["body"], tags: %w[p br a strong em b i ul ol li blockquote h2 h3 code pre img], attributes: %w[href src alt title] %>
 
-  <%# Sheet 12: Credits + Back cover %>
-  <div class="sheet">
+              <%= render "issues/article_footer", title: article["title"], url: article["url"] %>
+            </div>
+            <div class="page-number" data-page-number></div>
+          </article>
+        <% end %>
+
+        <% if article_pair.one? %>
+          <div class="paged-article paged-article--blank"></div>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+
+  <div class="paged-output" data-paged-output></div>
+
+  <%# Final sheet: Credits + Back cover %>
+  <div class="sheet" data-logical-sheet>
     <div class="half">
       <div class="credits-heading">
         <p class="zine-title" style="font-size:32px;text-align:left;">Credits</p>
       </div>
       <div style="flex:1;">
         <p class="credits-label">Published by</p>
-        <p class="credits-value"><%= current_user.zine_preference&.zine_name || "Doomscroll" %></p>
+        <p class="credits-value">DOOMSCROLL.PRESS</p>
+        <p class="credits-label">Stats</p>
+        <div class="credits-stats">
+          <div>
+            <span>Words</span>
+            <strong><%= number_with_delimiter(@stats.word_count) %></strong>
+          </div>
+          <div>
+            <span>Reading time</span>
+            <strong>&asymp; <%= @stats.reading_minutes %> min</strong>
+          </div>
+          <div>
+            <span>Most used word</span>
+            <strong><%= @stats.most_used_word || "—" %></strong>
+          </div>
+          <div>
+            <span>Rarest word</span>
+            <strong><%= @stats.rarest_word || "—" %></strong>
+          </div>
+          <div>
+            <span>Scrolling saved</span>
+            <strong><%= @stats.scroll_meters %> m</strong>
+          </div>
+          <div>
+            <span>Sources</span>
+            <strong><%= @stats.source_count %></strong>
+          </div>
+        </div>
         <p class="credits-label">Sources</p>
         <div style="display:flex;flex-direction:column;gap:3px;">
-          <% current_user.feeds.each do |feed| %>
-            <p class="credits-source"><%= feed.name.presence || feed.url %></p>
+          <% @articles.each do |article| %>
+            <p class="credits-source"><%= article["source"] %></p>
           <% end %>
         </div>
       </div>
-      <p class="credits-footer">Generated by DOOMSCROLL.PRESS · <%= @issue.published_at.strftime("%B %-d, %Y") %></p>
+      <div class="page-number" data-page-number></div>
     </div>
 
     <div class="half half--back-cover">
@@ -71,7 +92,371 @@
         <p class="back-cover__name">DOOMSCROLL.PRESS</p>
         <p class="text-muted-foreground font-mono text-xs"><%= @issue.published_at.strftime("%-d %B %Y") %></p>
       </div>
+      <div class="page-number" data-page-number></div>
     </div>
   </div>
-
 </div>
+
+<div class="booklet-output" data-booklet-output aria-hidden="true"></div>
+
+<script>
+  // --- Pagination -----------------------------------------------------------
+  //
+  // Splits each article into as many fixed-size pages (148.5mm x 210mm) as it
+  // needs, entirely in this document. Blocks that straddle a page boundary are
+  // split at the nearest word (paragraphs, blockquotes, pre) or list item
+  // (ul/ol); everything else moves whole to the next page, so nothing is ever
+  // clipped mid-element.
+
+  const MAX_PAGES_PER_ARTICLE = 60;
+  const PAGE_FIT_TOLERANCE_PX = 0.5;
+  const TEXT_SPLIT_TAGS = new Set(["P", "BLOCKQUOTE", "PRE"]);
+  const LIST_SPLIT_TAGS = new Set(["UL", "OL"]);
+  const KEEP_WITH_NEXT_TAGS = new Set(["H2", "H3"]);
+
+  function waitForAssets(root) {
+    const stylesheets = Array.from(document.querySelectorAll("link[rel='stylesheet']")).map((link) =>
+      link.sheet ? Promise.resolve() : new Promise((resolve) => {
+        link.addEventListener("load", resolve, { once: true });
+        link.addEventListener("error", resolve, { once: true });
+      })
+    );
+    const fonts = document.fonts ? document.fonts.ready : Promise.resolve();
+    const images = Array.from(root.querySelectorAll("img")).map((img) =>
+      img.complete ? Promise.resolve() : new Promise((resolve) => {
+        img.addEventListener("load", resolve, { once: true });
+        img.addEventListener("error", resolve, { once: true });
+      })
+    );
+    const timeout = new Promise((resolve) => setTimeout(resolve, 8000));
+    return Promise.race([Promise.all([...stylesheets, fonts, ...images]), timeout]);
+  }
+
+  function bodyOverflows(body) {
+    return body.scrollHeight > body.clientHeight + 1;
+  }
+
+  function continuationFor(article) {
+    const continued = article.cloneNode(false);
+    continued.classList.add("paged-article--continued");
+
+    const header = article.querySelector(".paged-article__header").cloneNode(true);
+    const label = header.querySelector("span");
+    if (label && !label.textContent.endsWith("(continued)")) label.textContent += " (continued)";
+    header.querySelector(".article-headline")?.remove();
+    header.querySelector(".article-meta")?.remove();
+
+    const body = document.createElement("div");
+    body.className = "article-body";
+
+    const pageNumber = document.createElement("div");
+    pageNumber.className = "page-number";
+    pageNumber.setAttribute("data-page-number", "");
+
+    continued.append(header, body, pageNumber);
+    return continued;
+  }
+
+  // Splits a text-flow block at the last word that fits above `limit`.
+  // Returns a new element holding the overflow, or null if no clean split
+  // exists. Uses Range rects, so the search never mutates the DOM and costs
+  // no reflows.
+  function splitTextBlock(block, limit) {
+    const walker = document.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+    const fullText = textNodes.map((node) => node.data).join("");
+    if (!fullText.trim()) return null;
+
+    const locate = (charIndex) => {
+      let remaining = charIndex;
+      for (const node of textNodes) {
+        if (remaining <= node.length) return { node, offset: remaining };
+        remaining -= node.length;
+      }
+      const last = textNodes[textNodes.length - 1];
+      return { node: last, offset: last.length };
+    };
+
+    const fitsThrough = (charIndex) => {
+      const { node, offset } = locate(charIndex);
+      const range = document.createRange();
+      range.setStart(block, 0);
+      range.setEnd(node, offset);
+      const rects = range.getClientRects();
+      return rects.length === 0 || rects[rects.length - 1].bottom <= limit + PAGE_FIT_TOLERANCE_PX;
+    };
+
+    let low = 1;
+    let high = fullText.length;
+    let best = 0;
+    while (low <= high) {
+      const mid = (low + high) >> 1;
+      if (fitsThrough(mid)) {
+        best = mid;
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+
+    while (best > 0 && /\S/.test(fullText[best - 1])) best -= 1; // snap back to a word boundary
+    if (best === 0 || best >= fullText.length) return null;
+
+    const { node, offset } = locate(best);
+    const range = document.createRange();
+    range.setStart(node, offset);
+    range.setEnd(block, block.childNodes.length);
+    const remainder = block.cloneNode(false);
+    remainder.appendChild(range.extractContents());
+    return remainder;
+  }
+
+  // Splits a list at the last item that fits above `limit`.
+  function splitListBlock(list, limit) {
+    const items = Array.from(list.children);
+    const splitIndex = items.findIndex((item) => item.getBoundingClientRect().bottom > limit + PAGE_FIT_TOLERANCE_PX);
+    if (splitIndex <= 0) return null;
+
+    const remainder = list.cloneNode(false);
+    if (list.tagName === "OL") remainder.setAttribute("start", splitIndex + 1);
+    items.slice(splitIndex).forEach((item) => remainder.appendChild(item));
+    return remainder;
+  }
+
+  function splitStraddlingBlock(block, limit) {
+    if (!block) return null;
+    if (TEXT_SPLIT_TAGS.has(block.tagName)) return splitTextBlock(block, limit);
+    if (LIST_SPLIT_TAGS.has(block.tagName)) return splitListBlock(block, limit);
+    return null;
+  }
+
+  // Moves whatever overflows the current page into a continuation page.
+  // Returns the continuation, or null when everything fits.
+  function fillPage(article) {
+    const body = article.querySelector(".article-body");
+    if (!bodyOverflows(body)) return null;
+
+    const limit = body.getBoundingClientRect().top + body.clientHeight;
+    const children = Array.from(body.children);
+
+    let splitIndex = children.findIndex((child) => child.getBoundingClientRect().bottom > limit + PAGE_FIT_TOLERANCE_PX);
+    if (splitIndex === -1) return null;
+
+    const remainder = splitStraddlingBlock(children[splitIndex], limit);
+    if (remainder) {
+      splitIndex += 1; // the trimmed block stays on this page
+    } else if (splitIndex === 0) {
+      splitIndex = 1; // oversized atomic block: keep it so the loop always progresses
+    } else if (splitIndex > 1 && KEEP_WITH_NEXT_TAGS.has(children[splitIndex - 1].tagName)) {
+      splitIndex -= 1; // don't strand a heading at the bottom of the page
+    }
+
+    const moved = children.slice(splitIndex);
+    if (moved.length === 0 && !remainder) return null;
+
+    const continuation = continuationFor(article);
+    const continuationBody = continuation.querySelector(".article-body");
+    if (remainder) continuationBody.appendChild(remainder);
+    moved.forEach((child) => continuationBody.appendChild(child));
+    return continuation;
+  }
+
+  function paginateArticle(article, measure) {
+    measure.appendChild(article);
+    const pages = [article];
+    let current = article;
+
+    for (let guard = 0; guard < MAX_PAGES_PER_ARTICLE; guard += 1) {
+      const continuation = fillPage(current);
+      if (!continuation) break;
+      measure.appendChild(continuation);
+      pages.push(continuation);
+      current = continuation;
+    }
+
+    pages.forEach((page) => page.remove());
+    return pages;
+  }
+
+  function blankArticlePage() {
+    const blank = document.createElement("div");
+    blank.className = "paged-article paged-article--blank";
+    return blank;
+  }
+
+  async function renderPagedArticles() {
+    const source = document.querySelector("[data-paged-flow]");
+    const output = document.querySelector("[data-paged-output]");
+    if (!source || !output || output.dataset.rendered === "true") return;
+    output.dataset.rendered = "true";
+
+    try {
+      await waitForAssets(source);
+
+      const articles = Array.from(source.querySelectorAll(".paged-article:not(.paged-article--blank)"))
+        .map((article) => article.cloneNode(true));
+
+      const measure = document.createElement("div");
+      measure.className = "paged-measure";
+      document.body.appendChild(measure);
+
+      const pages = [];
+      try {
+        articles.forEach((article) => pages.push(...paginateArticle(article, measure)));
+      } finally {
+        measure.remove();
+      }
+
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < pages.length; i += 2) {
+        const sheet = document.createElement("div");
+        sheet.className = "sheet paged-sheet";
+        sheet.appendChild(pages[i]);
+        sheet.appendChild(pages[i + 1] || blankArticlePage());
+        fragment.appendChild(sheet);
+      }
+      output.innerHTML = "";
+      output.appendChild(fragment);
+
+      assignDisplayPageNumbers();
+      if (document.body.dataset.printMode === "booklet") buildBookletOutput();
+    } catch (error) {
+      output.dataset.rendered = "false";
+      source.hidden = false; // fallback: show the unpaginated flow rather than nothing
+      console.error("Issue pagination failed", error);
+    }
+  }
+
+  function cleanupPagedArticles() {
+    document.querySelectorAll("[data-paged-output]").forEach((output) => {
+      output.innerHTML = "";
+      output.dataset.rendered = "false";
+    });
+    const booklet = document.querySelector("[data-booklet-output]");
+    if (booklet) booklet.innerHTML = "";
+    document.body.dataset.bookletReady = "false";
+  }
+
+  // --- Page numbers ---------------------------------------------------------
+
+  function articleDisplayPages() {
+    return Array.from(document.querySelectorAll("[data-paged-output] .paged-article"));
+  }
+
+  function coverAndBackSheets() {
+    const logicalSheets = Array.from(document.querySelectorAll("[data-logical-sheet]"));
+    const coverSheet = logicalSheets[0] || null;
+    const last = logicalSheets[logicalSheets.length - 1];
+    const backMatterSheet = last && last !== coverSheet ? last : null;
+    return { coverSheet, backMatterSheet };
+  }
+
+  function logicalIssuePages() {
+    const articlePages = articleDisplayPages();
+    if (articlePages.length === 0) return [];
+
+    const { coverSheet, backMatterSheet } = coverAndBackSheets();
+    const pages = [];
+    coverSheet?.querySelectorAll(":scope > .half").forEach((half) => pages.push(half.cloneNode(true)));
+    articlePages.forEach((page) => pages.push(page.cloneNode(true)));
+    backMatterSheet?.querySelectorAll(":scope > .half").forEach((half) => pages.push(half.cloneNode(true)));
+    return pages;
+  }
+
+  function clearPageNumbers(page) {
+    page.querySelectorAll(":scope > .page-number").forEach((number) => {
+      number.textContent = "";
+    });
+  }
+
+  // Sets the number text only; horizontal placement is CSS-driven from the
+  // page's physical slot in its sheet, so numbers always sit on outer corners.
+  function addPageNumber(page, number) {
+    clearPageNumbers(page);
+
+    if (page.classList.contains("booklet-page--blank") || page.classList.contains("paged-article--blank")) return;
+
+    const pageNumber = page.querySelector(":scope > [data-page-number]");
+    if (!pageNumber) return;
+
+    pageNumber.textContent = number;
+    page.dataset.logicalPageNumber = number;
+  }
+
+  function assignPageNumbers(pages) {
+    pages.forEach((page, index) => addPageNumber(page, index + 1));
+    return pages;
+  }
+
+  function assignDisplayPageNumbers() {
+    const articlePages = articleDisplayPages();
+    if (articlePages.length === 0) return;
+
+    const { coverSheet, backMatterSheet } = coverAndBackSheets();
+    assignPageNumbers([
+      ...Array.from(coverSheet?.querySelectorAll(":scope > .half") || []),
+      ...articlePages,
+      ...Array.from(backMatterSheet?.querySelectorAll(":scope > .half") || [])
+    ]);
+  }
+
+  // --- Booklet imposition ---------------------------------------------------
+
+  function blankLogicalPage() {
+    const blank = document.createElement("div");
+    blank.className = "half booklet-page booklet-page--blank";
+    return blank;
+  }
+
+  function bookletSheet(front, leftPage, rightPage) {
+    const sheet = document.createElement("div");
+    sheet.className = "sheet booklet-sheet";
+    sheet.dataset.bookletSide = front ? "front" : "back";
+    sheet.appendChild(leftPage || blankLogicalPage());
+    sheet.appendChild(rightPage || blankLogicalPage());
+    return sheet;
+  }
+
+  function normalizeBookletPage(page) {
+    page.classList.add("booklet-page");
+    page.classList.remove("paged-article--blank");
+    return page;
+  }
+
+  function buildBookletOutput() {
+    const output = document.querySelector("[data-booklet-output]");
+    if (!output) return;
+
+    const pages = logicalIssuePages().map(normalizeBookletPage);
+    if (pages.length === 0) {
+      document.body.dataset.bookletReady = "false";
+      return;
+    }
+
+    while (pages.length % 4 !== 0) pages.splice(Math.max(pages.length - 1, 0), 0, blankLogicalPage());
+    assignPageNumbers(pages);
+
+    output.innerHTML = "";
+
+    const sheetCount = pages.length / 4;
+    for (let sheetIndex = 0; sheetIndex < sheetCount; sheetIndex += 1) {
+      output.appendChild(bookletSheet(
+        true,
+        pages[pages.length - 1 - (sheetIndex * 2)],
+        pages[sheetIndex * 2]
+      ));
+      output.appendChild(bookletSheet(
+        false,
+        pages[(sheetIndex * 2) + 1],
+        pages[pages.length - 2 - (sheetIndex * 2)]
+      ));
+    }
+
+    document.body.dataset.bookletReady = "true";
+  }
+
+  document.addEventListener("DOMContentLoaded", renderPagedArticles);
+  document.addEventListener("turbo:load", renderPagedArticles);
+  document.addEventListener("turbo:before-cache", cleanupPagedArticles);
+</script>

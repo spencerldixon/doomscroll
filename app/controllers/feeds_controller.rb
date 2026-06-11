@@ -15,17 +15,21 @@ class FeedsController < ApplicationController
       redirect_to feeds_path, alert: "Please enter a valid http/https URL." and return
     end
 
-    domain = Feed.normalize_domain(uri.host)
-
+    domain = FeedUtils.get_base_domain(uri.host)
     feed = Feed.find_by(url: url) || Feed.find_by(domain: domain)
 
     if feed
-      current_user.user_feeds.find_or_create_by(feed_id: feed.id)
+      # If feed exists in our db, subscribe user to it
+      current_user.user_feeds.find_or_create_by(feed: feed)
       redirect_to feeds_path, notice: "Subscribed to #{feed.name}."
     else
-      feed = Feed.create!(url: url, name: url, domain: domain, private: true)
-      current_user.user_feeds.create!(feed_id: feed.id)
-      FeedFetchJob.perform_later(feed.id)
+      # Else add it as a private feed, and subscribe user to it
+      feed = Feed.create!(url: url, name: url, domain: domain)
+      current_user.user_feeds.create!(feed: feed)
+
+      # Discover feed, rate quality etc
+      FeedDiscoverJob.perform_later(feed)
+
       redirect_to feeds_path, notice: "Feed added — we're fetching its details."
     end
   rescue ActiveRecord::RecordInvalid => e

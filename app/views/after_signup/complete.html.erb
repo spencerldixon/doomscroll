@@ -29,11 +29,7 @@
     <div class="flex flex-wrap gap-2">
       <% current_user.feeds.order(:name).each do |feed| %>
         <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-xs font-medium">
-          <% if feed.icon_url.present? %>
-            <img src="<%= feed.icon_url %>" class="w-3.5 h-3.5 rounded-full shrink-0" alt="">
-          <% else %>
-            <img src="https://www.google.com/s2/favicons?domain=<%= URI.parse(feed.url).host rescue feed.url %>&sz=32" class="w-3.5 h-3.5 rounded-full shrink-0" alt="">
-          <% end %>
+          <%= feed_icon(feed, classes: "w-3.5 h-3.5 rounded-full shrink-0") %>
           <%= feed.name %>
         </span>
       <% end %>

@@ -31,9 +31,10 @@ gem "cancancan"
 gem "valid_email2"
 gem "mission_control-jobs"
 gem "telegram-bot-ruby"
-gem "telegram-bot-ruby"
 gem "wicked"
 gem "ssrf_filter"
+gem "rss"
+gem "rqrcode"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

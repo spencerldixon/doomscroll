@@ -1,0 +1,220 @@
+# Curated RSS/Atom feeds for Hacker News-adjacent readers.
+#
+# Selection criteria:
+#   - publishes full article content in the feed (no snippet-only or
+#     link-only feeds — ContentGenerator skips bodies under 100 words)
+#   - consistently high signal; the kind of writing that hits the HN frontpage
+#
+# Shape: name (display), url (feed url), category (informational only).
+feeds:
+  # --- Programming & software craft ------------------------------------------
+  - name: Julia Evans
+    url: https://jvns.ca/atom.xml
+    category: programming
+  - name: Dan Luu
+    url: https://danluu.com/atom.xml
+    category: programming
+  - name: Simon Willison
+    url: https://simonwillison.net/atom/everything/
+    category: programming
+  - name: Drew DeVault
+    url: https://drewdevault.com/blog/index.xml
+    category: programming
+  - name: Armin Ronacher
+    url: https://lucumr.pocoo.org/feed.atom
+    category: programming
+  - name: antirez
+    url: https://antirez.com/rss
+    category: programming
+  - name: matklad
+    url: https://matklad.github.io/feed.xml
+    category: programming
+  - name: Mitchell Hashimoto
+    url: https://mitchellh.com/feed.xml
+    category: programming
+  - name: Eli Bendersky
+    url: https://eli.thegreenplace.net/feeds/all.atom.xml
+    category: programming
+  - name: Martin Fowler
+    url: https://martinfowler.com/feed.atom
+    category: programming
+  - name: Brandur Leach
+    url: https://brandur.org/articles.atom
+    category: programming
+  - name: fasterthanli.me
+    url: https://fasterthanli.me/index.xml
+    category: programming
+  - name: Dan Abramov (overreacted)
+    url: https://overreacted.io/rss.xml
+    category: programming
+  - name: Coding Horror
+    url: https://blog.codinghorror.com/rss/
+    category: programming
+  - name: Joel on Software
+    url: https://www.joelonsoftware.com/feed/
+    category: programming
+  - name: The Old New Thing (Raymond Chen)
+    url: https://devblogs.microsoft.com/oldnewthing/feed
+    category: programming
+
+  # --- Systems, infrastructure & hardware -------------------------------------
+  - name: Rachel by the Bay
+    url: https://rachelbythebay.com/w/atom.xml
+    category: systems
+  - name: Xe Iaso
+    url: https://xeiaso.net/blog.rss
+    category: systems
+  - name: Fabien Sanglard
+    url: https://fabiensanglard.net/rss.xml
+    category: systems
+  - name: Daniel Lemire
+    url: https://lemire.me/blog/feed/
+    category: systems
+  - name: John Regehr (Embedded in Academia)
+    url: https://blog.regehr.org/feed
+    category: systems
+  - name: Daniel Stenberg (curl)
+    url: https://daniel.haxx.se/blog/feed/
+    category: systems
+  - name: Bert Hubert
+    url: https://berthub.eu/articles/index.xml
+    category: systems
+  - name: Werner Vogels (All Things Distributed)
+    url: https://www.allthingsdistributed.com/atom.xml
+    category: systems
+  - name: Jeff Geerling
+    url: https://www.jeffgeerling.com/blog.xml
+    category: hardware
+  - name: Computers Are Bad
+    url: https://computer.rip/rss.xml
+    category: systems
+  - name: Hackaday
+    url: https://hackaday.com/feed/
+    category: hardware
+
+  # --- Company engineering blogs ----------------------------------------------
+  - name: Cloudflare Blog
+    url: https://blog.cloudflare.com/rss/
+    category: engineering
+  - name: GitHub Blog
+    url: https://github.blog/feed/
+    category: engineering
+  - name: Fly.io Blog
+    url: https://fly.io/blog/feed.xml
+    category: engineering
+  - name: Tailscale Blog
+    url: https://tailscale.com/blog/index.xml
+    category: engineering
+  - name: Mozilla Hacks
+    url: https://hacks.mozilla.org/feed/
+    category: engineering
+  - name: Signal Blog
+    url: https://signal.org/blog/rss.xml
+    category: engineering
+
+  # --- Security ----------------------------------------------------------------
+  - name: Krebs on Security
+    url: https://krebsonsecurity.com/feed/
+    category: security
+  - name: Schneier on Security
+    url: https://www.schneier.com/feed/atom/
+    category: security
+  - name: Troy Hunt
+    url: https://www.troyhunt.com/rss/
+    category: security
+  - name: Filippo Valsorda
+    url: https://words.filippo.io/rss/
+    category: security
+
+  # --- AI & machine learning -----------------------------------------------------
+  - name: Andrej Karpathy
+    url: https://karpathy.github.io/feed.xml
+    category: ai
+  - name: Lilian Weng
+    url: https://lilianweng.github.io/index.xml
+    category: ai
+  - name: Hugging Face Blog
+    url: https://huggingface.co/blog/feed.xml
+    category: ai
+
+  # --- Science, math & ideas ------------------------------------------------------
+  - name: Quanta Magazine
+    url: https://www.quantamagazine.org/feed/
+    category: science
+  - name: Scott Aaronson (Shtetl-Optimized)
+    url: https://scottaaronson.blog/?feed=rss2
+    category: science
+  - name: Bartosz Ciechanowski
+    url: https://ciechanow.ski/atom.xml
+    category: science
+  - name: John D. Cook
+    url: https://www.johndcook.com/blog/feed/
+    category: science
+  - name: Astral Codex Ten
+    url: https://www.astralcodexten.com/feed
+    category: ideas
+  - name: Marginal Revolution
+    url: https://marginalrevolution.com/feed
+    category: economics
+  - name: Construction Physics
+    url: https://www.construction-physics.com/feed
+    category: ideas
+
+  # --- Tech culture & commentary ----------------------------------------------------
+  - name: Tim Bray (ongoing)
+    url: https://www.tbray.org/ongoing/ongoing.atom
+    category: culture
+  - name: Pluralistic (Cory Doctorow)
+    url: https://pluralistic.net/feed/
+    category: culture
+  - name: Citation Needed (Molly White)
+    url: https://www.citationneeded.news/rss/
+    category: culture
+
+  # --- News & journalism (full-text feeds only; most big outlets are snippet-only)
+  - name: ProPublica
+    url: https://www.propublica.org/feeds/propublica/main
+    category: news
+  - name: The Conversation
+    url: https://theconversation.com/us/articles.atom
+    category: news
+  - name: Rest of World
+    url: https://restofworld.org/feed/latest/
+    category: news
+  - name: Ars Technica
+    url: https://feeds.arstechnica.com/arstechnica/index
+    category: news
+
+  # --- Essays everyone should read ---------------------------------------------
+  - name: Wait But Why
+    url: https://waitbutwhy.com/feed
+    category: essays
+  - name: Aeon
+    url: https://aeon.co/feed.rss
+    category: essays
+  - name: The Marginalian
+    url: https://www.themarginalian.org/feed/
+    category: essays
+  - name: Dynomight
+    url: https://dynomight.net/feed.xml
+    category: essays
+  - name: Experimental History
+    url: https://www.experimental-history.com/feed
+    category: essays
+
+  # --- Fun & curiosities ----------------------------------------------------------
+  - name: Damn Interesting
+    url: https://www.damninteresting.com/feed/
+    category: fun
+  - name: Futility Closet
+    url: https://www.futilitycloset.com/feed/
+    category: fun
+  - name: The Public Domain Review
+    url: https://publicdomainreview.org/rss.xml
+    category: fun
+  - name: McMansion Hell
+    url: https://mcmansionhell.com/rss
+    category: fun
+  - name: kottke.org
+    url: https://feeds.kottke.org/main
+    category: fun

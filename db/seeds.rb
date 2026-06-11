@@ -18,67 +18,19 @@ end
 
 user.confirm unless user.confirmed?
 
-feeds = [
-  {
-    name: "The Verge",
-    url: "https://www.theverge.com/rss/index.xml",
-    description: "Tech, science, art, and culture.",
-    icon_url: "https://www.google.com/s2/favicons?domain=theverge.com&sz=64"
-  },
-  {
-    name: "Hacker News",
-    url: "https://news.ycombinator.com/rss",
-    description: "Links for the intellectually curious.",
-    icon_url: "https://www.google.com/s2/favicons?domain=news.ycombinator.com&sz=64"
-  },
-  {
-    name: "Ars Technica",
-    url: "https://feeds.arstechnica.com/arstechnica/index",
-    description: "In-depth tech news and reviews.",
-    icon_url: "https://www.google.com/s2/favicons?domain=arstechnica.com&sz=64"
-  },
-  {
-    name: "Wired",
-    url: "https://www.wired.com/feed/rss",
-    description: "Technology and how it changes everything.",
-    icon_url: "https://www.google.com/s2/favicons?domain=wired.com&sz=64"
-  },
-  {
-    name: "404 Media",
-    url: "https://www.404media.co/rss/",
-    description: "Investigative tech journalism.",
-    icon_url: "https://www.google.com/s2/favicons?domain=404media.co&sz=64"
-  },
-  {
-    name: "Defector",
-    url: "https://defector.com/feed",
-    description: "Sports and culture by the people who cover it.",
-    icon_url: "https://www.google.com/s2/favicons?domain=defector.com&sz=64"
-  },
-  {
-    name: "Colossal",
-    url: "https://www.thisiscolossal.com/feed/",
-    description: "Art, design, and visual culture.",
-    icon_url: "https://www.google.com/s2/favicons?domain=thisiscolossal.com&sz=64"
-  },
-  {
-    name: "Pitchfork",
-    url: "https://pitchfork.com/rss/news/",
-    description: "Music news and reviews.",
-    icon_url: "https://www.google.com/s2/favicons?domain=pitchfork.com&sz=64"
-  },
-  {
-    name: "The Atlantic",
-    url: "https://www.theatlantic.com/feed/all/",
-    description: "Ideas, politics, and culture.",
-    icon_url: "https://www.google.com/s2/favicons?domain=theatlantic.com&sz=64"
-  }
-]
+feeds = YAML.load_file(Rails.root.join("db", "feeds.yml")).fetch("feeds")
 
-feeds.each do |attrs|
-  Feed.find_or_create_by!(url: attrs[:url]) do |f|
-    f.name = attrs[:name]
-    f.description = attrs[:description]
-    f.icon_url = attrs[:icon_url]
-  end
+feeds.each do |entry|
+  feed = Feed.find_or_initialize_by(url: entry.fetch("url"))
+  feed.public = true
+  feed.category = entry["category"]
+  feed.save!
+
+  FeedDiscoverJob.perform_later(feed) if feed.unknown?
+rescue StandardError => e
+  # The discover job destroys feeds it can't validate; don't let one dead
+  # feed abort the rest of the seed.
+  Rails.logger.warn "[seeds] skipping feed #{entry["url"]}: #{e.message}"
 end
+
+User.first.issues.create! if User.first.issues.none?

@@ -1,8 +1,7 @@
-<%# Sheet 1: Cover + TOC %>
-<div class="sheet">
-  <div class="half half--cover">
+<div class="sheet" data-logical-sheet>
+  <div class="half">
     <span class="vt text-center mb-2">DOOMSCROLL.PRESS</span>
-    <h1 class="text-5xl vt"><%= current_user.zine_preference&.zine_name&.upcase || "DOOMSCROLL" %></h1>
+    <h1 class="text-6xl vt"><%= @issue.user.zine_preference&.zine_name&.upcase || "DOOMSCROLL" %></h1>
     <p class="font-mono text-xs">
       Issue #<%= @issue.number %> | 
       <%= @issue.published_at.strftime("%A %-d %B %Y") %>
@@ -12,30 +11,26 @@
 
     <section>
       <div class="flex items-center gap-1 mb-2">
-        <% current_user.feeds.each do |feed| %>
-          <img src="https://www.google.com/s2/favicons?domain=<%= feed.favicon_domain %>&sz=32"
-               alt="<%= feed.name %>"
-               title="<%= feed.name %>"
-               class="cover-in-this-issue__icon"
-               width="16" height="16">
+        <% @articles.pluck("url").each do |url| %>
+           <%= feed_icon_url(url, size: 18, classes: "cover-in-this-issue__icon") %>
         <% end %>
       </div>
     </section>
   </div>
 
   <div class="half">
-    <div class="toc-heading">
-      <p class="zine-label" style="margin-bottom:2px;">Issue #<%= @issue.number %></p>
-      <p class="zine-title" style="font-size:32px;text-align:left;">Contents</p>
-    </div>
-    <% 20.times do |i| %>
-      <div class="toc-row">
-        <div style="display:flex;align-items:baseline;gap:8px;">
-          <span class="toc-num"><%= (i + 1).to_s.rjust(2, "0") %></span>
-          <span class="toc-title">Article <%= i + 1 %></span>
+    <h2 class="vt text-3xl border-b pb-2 mb-4">In this issue</h2>
+
+    <section class="flex flex-col gap-4">
+      <% @articles.each_with_index do |article, i| %>
+        <div class="flex items-start font-mono text-xs gap-2">
+          <span class="text-muted-foreground"><%= i + 1 %>.</span>
+          <div class="">
+            <p class="mb-1"><%= article["title"] %></p>
+            <span class="text-muted-foreground italic text-[8px]"><%= article["source"] %></span>
+          </div>
         </div>
-        <span class="toc-page"><%= i + 3 %></span>
-      </div>
-    <% end %>
+      <% end %>
+    </section>
   </div>
 </div>

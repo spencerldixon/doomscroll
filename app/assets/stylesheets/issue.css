@@ -6,7 +6,8 @@
   gap: 1.5rem;
 }
 
-.sheet {
+.sheet,
+.paged-sheet-source {
   width: 297mm;
   height: 210mm;
   background: white;
@@ -16,7 +17,8 @@
   position: relative;
 }
 
-.sheet::after {
+.sheet::after,
+.paged-sheet-source::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -32,17 +34,13 @@
   height: 210mm;
   overflow: hidden;
   flex-shrink: 0;
-  padding: 28px 28px 20px;
+  padding: 28px 28px 34px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-}
-
-.half--cover {
   position: relative;
 }
 
-/* Cover artwork */
 .cover-artwork {
   flex: 1;
   overflow: hidden;
@@ -57,141 +55,191 @@
   position: relative;
 }
 
-.half__inner {
-  position: relative;
-  z-index: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  justify-content: start;
-  gap: 14px;
-}
-
-/* Typography helpers */
-.zine-label {
-  font-family: 'Space Mono', monospace;
-  font-size: 7px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: #888;
-}
-
 .zine-title {
   font-family: 'VT323', monospace;
   line-height: 1;
   color: #000;
 }
 
-.zine-rule {
-  width: 48px;
-  height: 2px;
-  background: #000;
+@page issue-sheet {
+  size: A4 landscape;
+  margin: 0;
 }
 
-.zine-footer {
-  margin-top: auto;
-  font-family: 'Space Mono', monospace;
-  font-size: 6px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #888;
+.article-flow[hidden] {
+  display: none;
 }
 
-/* TOC */
-.toc-heading {
-  border-bottom: 2px solid #000;
-  padding-bottom: 6px;
-  margin-bottom: 14px;
-}
-
-.toc-row {
+.paged-output {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  border-bottom: 1px dotted #ddd;
-  padding: 3.5px 0;
-}
-
-.toc-num {
-  font-family: 'Space Mono', monospace;
-  font-size: 6px;
-  color: #aaa;
-  min-width: 14px;
-}
-
-.toc-title {
-  font-family: 'Space Mono', monospace;
-  font-size: 7px;
-}
-
-.toc-page {
-  font-family: 'Space Mono', monospace;
-  font-size: 6px;
-  color: #aaa;
-}
-
-/* Article pages */
-.article-header {
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid #000;
+  gap: 1.5rem;
 }
 
-.article-header__label {
+.paged-output:empty {
+  display: none;
+}
+
+/* Offscreen-but-laid-out container used while measuring page splits. */
+.paged-measure {
+  position: absolute;
+  left: -10000px;
+  top: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.booklet-output {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 0;
+}
+
+body[data-print-mode="booklet"][data-booklet-ready="true"] .issue-pages {
+  display: none;
+}
+
+body[data-print-mode="booklet"][data-booklet-ready="true"] .booklet-output {
+  display: flex;
+}
+
+.booklet-page--blank {
+  background: white;
+}
+
+.paged-sheet-source {
+  page: issue-sheet;
+  break-before: page;
+  break-after: page;
+  break-inside: avoid;
+}
+
+.paged-sheet-source:first-child {
+  break-before: auto;
+}
+
+.paged-article {
+  width: 148.5mm;
+  height: 210mm;
+  padding: 28px 28px 34px;
+  box-sizing: border-box;
+  overflow: hidden;
   font-family: 'Space Mono', monospace;
-  font-size: 6px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #888;
+  display: flex;
+  flex-direction: column;
+  break-inside: avoid;
+  flex: 0 0 148.5mm;
+  contain: paint;
+  position: relative;
 }
 
-.article-header__page {
+.page-number {
+  position: absolute;
+  bottom: 6mm; /* clear of typical printer unprintable margin (~5mm) */
+  z-index: 2;
   font-family: 'Space Mono', monospace;
   font-size: 6px;
   color: #aaa;
+  line-height: 1;
+}
+
+/* Outer corners: left page of a spread numbers at its left edge, right page
+   at its right edge — regardless of reader or booklet ordering. */
+.sheet > :first-child > .page-number,
+.paged-sheet-source > :first-child > .page-number {
+  left: 28px;
+}
+
+.sheet > :last-child > .page-number,
+.paged-sheet-source > :last-child > .page-number {
+  right: 28px;
+}
+
+.paged-article--blank {
+  background: white;
+}
+
+.paged-article__header {
+  break-after: avoid;
 }
 
 .article-headline {
   font-family: 'VT323', monospace;
   font-size: 24px;
   line-height: 1.15;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   color: #000;
+  break-inside: avoid;
+}
+
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 6px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.article-meta span + span::before {
+  content: '/';
+  margin-right: 8px;
+  color: #ccc;
 }
 
 .article-body {
   font-family: 'Space Mono', monospace;
-  font-size: 7px;
+  font-size: 10px;
   line-height: 1.75;
-  color: #444;
+  color: #000;
   flex: 1;
-  columns: 2;
-  column-gap: 12px;
+  min-height: 0;
   overflow: hidden;
 }
 
-.article-body p {
+.article-body p,
+.article-body li,
+.article-body blockquote {
   margin-bottom: 8px;
 }
 
-.article-source {
-  margin-top: 10px;
-  padding-top: 7px;
-  border-top: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
+.article-body h2,
+.article-body h3 {
+  font-family: 'VT323', monospace;
+  line-height: 1.1;
+  color: #000;
+  break-after: avoid;
+  margin: 10px 0 6px;
 }
 
-.article-source span {
-  font-family: 'Space Mono', monospace;
-  font-size: 5.5px;
-  color: #bbb;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
+.article-body h2 {
+  font-size: 18px;
+}
+
+.article-body h3 {
+  font-size: 14px;
+}
+
+.article-body img {
+  max-width: 90%;
+  max-height: 80mm;
+  object-fit: contain;
+  break-inside: avoid;
+  margin: 8px 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.article-source-qr,
+.article-source-qr svg {
+  width: 60px;
+  height: 60px;
 }
 
 /* Credits */
@@ -216,18 +264,41 @@
   margin-bottom: 18px;
 }
 
+.credits-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.credits-stats div {
+  border-top: 1px solid #eee;
+  padding-top: 6px;
+}
+
+.credits-stats span {
+  display: block;
+  margin-bottom: 3px;
+  font-family: 'Space Mono', monospace;
+  font-size: 5.5px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.credits-stats strong {
+  display: block;
+  overflow-wrap: anywhere;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  color: #111;
+  font-weight: 400;
+}
+
 .credits-source {
   font-family: 'Space Mono', monospace;
   font-size: 7px;
   color: #333;
-}
-
-.credits-footer {
-  border-top: 1px solid #eee;
-  padding-top: 10px;
-  font-family: 'Space Mono', monospace;
-  font-size: 5.5px;
-  color: #bbb;
 }
 
 /* Back cover */
@@ -257,16 +328,32 @@
 
   .print-toolbar { display: none !important; }
 
-  .issue-pages {
+  .issue-pages,
+  .paged-output,
+  .booklet-output {
     padding: 0 !important;
     gap: 0 !important;
     background: white !important;
   }
 
-  .sheet {
+  .sheet,
+  .booklet-sheet {
     box-shadow: none !important;
     break-after: page;
     page-break-after: always;
+  }
+
+  body[data-print-mode="reader"] .booklet-output,
+  body:not([data-print-mode="booklet"]) .booklet-output {
+    display: none !important;
+  }
+
+  body[data-print-mode="booklet"][data-booklet-ready="true"] .issue-pages {
+    display: none !important;
+  }
+
+  body[data-print-mode="booklet"][data-booklet-ready="true"] .booklet-output {
+    display: flex !important;
   }
 
   .sheet::after { display: none; }

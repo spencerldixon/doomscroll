@@ -1,30 +1,32 @@
-<div
-  id="feed_<%= feed.id %>"
-  data-filter-target="item"
-  data-name="<%= feed.name %>"
-  data-description="<%= feed.description %>"
-  class="flex flex-col items-center gap-2 p-3 border border-border rounded-lg aspect-[3/4]"
->
-  <div class="flex-1 flex items-center justify-center w-full">
-    <img
-      src="https://www.google.com/s2/favicons?domain=<%= feed.domain || URI.parse(feed.url).host %>&sz=64"
-      alt="<%= feed.name %>"
-      class="w-10 h-10 rounded object-contain"
-    >
-  </div>
-  <div class="w-full space-y-0.5 text-center">
-    <p class="text-xs font-semibold truncate leading-tight"><%= feed.name %></p>
-    <p class="text-[10px] text-muted-foreground truncate"><%= feed.domain || URI.parse(feed.url).host %></p>
-  </div>
-  <div class="w-full mt-auto">
-    <% if subscribed %>
-      <%= button_to user_feed_path(feed.id), method: :delete, class: "w-full btn text-xs py-1" do %>
-        Subscribed
-      <% end %>
-    <% else %>
-      <%= button_to user_feeds_path, params: { feed_id: feed.id }, class: "w-full btn-outline text-xs py-1" do %>
-        + Subscribe
-      <% end %>
-    <% end %>
-  </div>
-</div>
+<% path = subscribed ? user_feed_path(feed.id) : user_feeds_path %>
+<% method = subscribed ? :delete : :post %>
+<% button_params = subscribed ? { tab: "discover" } : { feed_id: feed.id, tab: "discover" } %>
+
+<%= form_with url: path,
+  method: method,
+  data: {
+    filter_target: "item",
+    name: feed.name,
+    description: feed.description
+  },
+  html: { id: "feed_#{feed.id}", style: "aspect-ratio: 3 / 4;" } do %>
+  <% button_params.each do |name, value| %>
+    <input type="hidden" name="<%= name %>" value="<%= value %>">
+  <% end %>
+
+  <button
+    type="submit"
+    data-selection-target="card"
+    data-id="<%= feed.id %>"
+    class="w-full flex flex-col items-center justify-center gap-2 py-6 px-3 border border-border rounded-lg cursor-pointer hover:border-violet-400 transition-all select-none <%= 'selected' if subscribed %>"
+    style="height: 100%; overflow: hidden;"
+    title="<%= subscribed ? "Unsubscribe from #{feed.name}" : "Subscribe to #{feed.name}" %>"
+  >
+    <%= feed_icon(feed, size: 64, classes: "w-10 h-10 rounded object-contain") %>
+
+    <div class="w-full space-y-2 text-center overflow-hidden">
+      <p class="text-xs font-semibold leading-tight" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><%= feed.name %></p>
+      <p class="text-[10px] text-muted-foreground leading-tight" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><%= feed.description %></p>
+    </div>
+  </button>
+<% end %>

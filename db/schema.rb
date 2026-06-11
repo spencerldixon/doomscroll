@@ -10,19 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_30_210720) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_11_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  # Custom types defined in this database.
+  # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "qualities", ["unknown", "empty", "partial", "full"]
+
   create_table "feeds", force: :cascade do |t|
+    t.string "category"
     t.datetime "created_at", null: false
     t.text "description"
     t.string "domain"
-    t.string "icon_url"
     t.string "name"
-    t.boolean "private", default: false, null: false
+    t.boolean "public", default: false, null: false
+    t.enum "quality", default: "unknown", null: false, enum_type: "qualities"
     t.datetime "updated_at", null: false
     t.string "url"
+    t.index ["category"], name: "index_feeds_on_category"
     t.index ["domain"], name: "index_feeds_on_domain"
     t.index ["url"], name: "index_feeds_on_url", unique: true
   end
@@ -32,6 +38,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_30_210720) do
     t.datetime "created_at", null: false
     t.integer "number", null: false
     t.datetime "published_at", null: false
+    t.string "title", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id", "number"], name: "index_issues_on_user_id_and_number", unique: true

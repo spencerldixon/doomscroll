@@ -15,7 +15,7 @@
     <%= stylesheet_link_tag "issue", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
-  <body class="bg-neutral-400 min-h-screen">
+  <body class="bg-neutral-400 min-h-screen" data-print-mode="<%= @booklet_print_mode ? "booklet" : "reader" %>">
     <%= render "issues/toolbar" %>
     <%= yield %>
   </body>

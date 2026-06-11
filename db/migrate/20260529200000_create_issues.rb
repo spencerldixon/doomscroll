@@ -5,6 +5,7 @@ class CreateIssues < ActiveRecord::Migration[8.1]
       t.integer :number, null: false
       t.datetime :published_at, null: false
       t.string :title, null: false
+      t.jsonb :content, default: [], null: false
 
       t.timestamps
     end

@@ -1,0 +1,12 @@
+<div class="bg-gray-100 border p-4">
+  <div class="flex gap-4">
+    <div class="article-source-qr">
+      <%= RQRCode::QRCode.new(url).as_svg(viewbox: 2).html_safe %>
+    </div>
+
+    <div>
+      <div class="bold"><%= title %></div>
+      <div class="text-[8px] text-muted-foreground"><%= url %></div>
+    </div>
+  </div>
+</div>
