@@ -16,6 +16,8 @@ class UserFeedsController < ApplicationController
   private
 
   def feeds_redirect_path
-    params[:tab] == "discover" ? feeds_path(tab: "discover") : feeds_path
+    return feeds_path unless params[:tab] == "discover"
+
+    feeds_path(tab: "discover", category: params[:category].presence)
   end
 end

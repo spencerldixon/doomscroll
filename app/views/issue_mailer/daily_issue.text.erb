@@ -1,0 +1,33 @@
+Your new issue is ready to print!
+
+<%= @issue.title %> is waiting to help you beat the scroll. Print it, staple it, and read the good bits away from the screen.
+
+Print your issue:
+<%= @issue_url %>
+
+<% if @featured_articles.any? %>
+A few pieces waiting inside:
+<% if @featured_authors.any? %>
+Featuring <%= @featured_authors.to_sentence %>.
+<% end %>
+
+<% @featured_articles.each do |article| %>
+<% metadata = [article["source"], article["author"].presence && "by #{article['author']}"].compact.join(" / ") %>
+- <%= article["title"] %><%= " (#{metadata})" if metadata.present? %>
+<% end %>
+
+<% end %>
+<% if @articles.any? %>
+Issue stats:
+- <%= @articles.size %> articles
+- <%= @stats.reading_minutes %> minute read
+- <%= @stats.source_count %> sources
+- <%= @stats.scroll_meters %>m of scroll avoided
+
+<% end %>
+Print instructions:
+
+1. Open the issue and press the Print button.
+2. Set your printer to double-sided printing and set flip on short edge.
+3. Fold the stack in half and staple the spine.
+4. Take it somewhere quiet and enjoy.

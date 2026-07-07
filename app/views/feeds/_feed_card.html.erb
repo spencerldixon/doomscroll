@@ -7,7 +7,9 @@
   data: {
     filter_target: "item",
     name: feed.name,
-    description: feed.description
+    description: feed.description,
+    category: feed.category,
+    action: "submit->filter#preserveCategory"
   },
   html: { id: "feed_#{feed.id}", style: "aspect-ratio: 3 / 4;" } do %>
   <% button_params.each do |name, value| %>

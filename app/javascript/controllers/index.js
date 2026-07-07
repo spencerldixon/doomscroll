@@ -18,3 +18,6 @@ application.register("countdown", CountdownController)
 
 import FilterController from "./filter_controller"
 application.register("filter", FilterController)
+
+import DialogController from "./dialog_controller"
+application.register("dialog", DialogController)

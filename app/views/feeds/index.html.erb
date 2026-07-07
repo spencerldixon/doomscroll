@@ -3,14 +3,62 @@
 
 <% discover_tab = params[:tab] == "discover" %>
 
-<div class="max-w-5xl mx-auto px-4 space-y-12">
-  <div class="space-y-4">
-    <h2 class="text-xl font-semibold vt">Add a custom feed</h2>
-    <p class="text-muted-foreground text-sm">Paste any RSS or Atom URL. We'll fetch the details in the background.</p>
-    <%= form_with url: feeds_path, method: :post, class: "flex gap-3" do |f| %>
-      <input type="url" name="url" placeholder="https://example.com/feed.xml" class="input flex-1" required>
-      <button type="submit" class="btn-primary">Add</button>
-    <% end %>
+<div class="max-w-5xl mx-auto px-4 space-y-10">
+  <div class="" data-controller="dialog">
+    <div class="flex flex-col gap-2 lg:flex-row lg:items-end">
+      <div class="min-w-0 flex-1 space-y-3">
+          <h2 class="text-lg font-semibold vt">Add a feed</h2>
+          <p class="text-muted-foreground text-sm">Paste an RSS or Atom URL. We'll fetch the details in the background</p>
+
+        <%= form_with url: feeds_path, method: :post, class: "flex flex-col gap-2 sm:flex-row" do |f| %>
+          <input type="url" name="url" placeholder="https://example.com/feed.xml" class="input min-w-0 flex-1" required>
+          <button type="submit" class="btn-primary">
+            <i class="fa-solid fa-plus" aria-hidden="true"></i>
+            Add
+          </button>
+        <% end %>
+      </div>
+
+      <button type="button" class="btn-outline lg:mb-0" data-action="dialog#open">
+        <i class="fa-solid fa-file-import" aria-hidden="true"></i>
+        Import OPML
+      </button>
+    </div>
+
+    <dialog class="dialog" data-dialog-target="dialog" data-action="click->dialog#closeOnBackdrop">
+      <div>
+        <header>
+          <h2>Import OPML</h2>
+          <p>Upload a reader export to subscribe to multiple feeds at once.</p>
+        </header>
+
+        <section>
+          <%= form_with url: import_opml_feeds_path, method: :post, multipart: true, class: "form", id: "opml-import-form" do |f| %>
+            <div class="field">
+              <%= f.label :opml_file, "OPML file" %>
+              <%= f.file_field :opml_file, accept: ".opml,.xml,text/x-opml,text/xml,application/xml", required: true %>
+              <p>Reader export, up to 1 MB.</p>
+            </div>
+          <% end %>
+        </section>
+
+        <footer>
+          <form method="dialog">
+            <button type="submit" class="btn-outline">Cancel</button>
+          </form>
+          <button type="submit" form="opml-import-form" class="btn-primary">
+            <i class="fa-solid fa-upload" aria-hidden="true"></i>
+            Import
+          </button>
+        </footer>
+
+        <form method="dialog">
+          <button type="submit" aria-label="Close">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </form>
+      </div>
+    </dialog>
   </div>
 
   <div class="tabs space-y-4">
@@ -36,7 +84,8 @@
       <% end %>
     </div>
 
-    <div id="discover-feeds-panel" role="tabpanel" aria-labelledby="discover-feeds-tab" class="space-y-4" <%= "hidden" unless discover_tab %> data-controller="filter">
+    <% selected_category = params[:category].to_s %>
+    <div id="discover-feeds-panel" role="tabpanel" aria-labelledby="discover-feeds-tab" class="space-y-4" <%= "hidden" unless discover_tab %> data-controller="filter" data-filter-category-value="<%= selected_category %>">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h2 class="text-xl font-semibold vt">Discover</h2>
         <input
@@ -50,7 +99,13 @@
       <% if @curated_feeds.empty? %>
         <p class="text-muted-foreground text-sm">No curated feeds available yet.</p>
       <% else %>
-        <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 gap-3 mb-8">
+        <div class="flex flex-wrap gap-2" role="group" aria-label="Feed categories">
+          <button type="button" class="<%= selected_category == "" ? "btn-sm-primary" : "btn-sm-outline" %> rounded-full" data-filter-target="tab" data-category="" data-action="filter#selectCategory" aria-pressed="<%= selected_category == "" %>">All</button>
+          <% @categories.each do |category| %>
+            <button type="button" class="<%= selected_category == category ? "btn-sm-primary" : "btn-sm-outline" %> rounded-full" data-filter-target="tab" data-category="<%= category %>" data-action="filter#selectCategory" aria-pressed="<%= selected_category == category %>"><%= category.titleize %></button>
+          <% end %>
+        </div>
+        <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 gap-3 mb-8 max-h-[360px] overflow-y-auto pr-1">
           <% @curated_feeds.each do |feed| %>
             <%= render "feeds/feed_card", feed: feed, subscribed: @user_feed_ids.include?(feed.id) %>
           <% end %>

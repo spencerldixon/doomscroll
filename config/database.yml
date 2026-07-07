@@ -89,6 +89,8 @@ production:
     <<: *default
     database: doomscroll_production
     username: doomscroll
+    host: <%= ENV.fetch("DB_HOST", "localhost") %>
+    port: <%= ENV.fetch("DB_PORT", 5432) %>
     password: <%= ENV["DOOMSCROLL_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production

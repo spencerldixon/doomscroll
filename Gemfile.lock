@@ -546,6 +546,7 @@ DEPENDENCIES
   cssbundling-rails
   debug
   devise
+  dotenv (~> 3.2)
   factory_bot_rails
   image_processing (~> 1.2)
   jbuilder

@@ -2,7 +2,10 @@ Rails.application.routes.draw do
   authenticate :user, ->(user) { user.admin? } do
     mount MissionControl::Jobs::Engine, at: "/jobs"
   end
-  devise_for :users, controllers: { omniauth_callbacks: "users/omniauth_callbacks" }
+  devise_for :users, controllers: {
+    omniauth_callbacks: "users/omniauth_callbacks",
+    registrations: "users/registrations"
+  }
   devise_scope :user do
     unauthenticated do
       root to: "devise/sessions#new"
@@ -23,7 +26,9 @@ Rails.application.routes.draw do
 
   resources :issues, only: [:index, :show]
   resource :preferences, only: [:show, :update]
-  resources :feeds, only: [:index, :create]
+  resources :feeds, only: [:index, :create] do
+    post :import_opml, on: :collection
+  end
   resources :user_feeds, only: [:create, :destroy], param: :feed_id
 
   get "up" => "rails/health#show", as: :rails_health_check

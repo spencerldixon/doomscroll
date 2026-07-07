@@ -1,0 +1,8 @@
+.flash {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  width: fit-content;
+  z-index: 50;
+  animation: wiggle 0.5s ease-in-out;
+}

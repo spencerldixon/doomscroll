@@ -16,6 +16,7 @@ gem "solid_cache"
 gem "solid_queue"
 gem "solid_cable"
 gem "bootsnap", require: false
+gem "dotenv", "~> 3.2"
 gem "kamal", require: false
 gem "thruster", require: false
 gem "image_processing", "~> 1.2"

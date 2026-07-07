@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :lockable, :confirmable, :trackable,
-         :omniauthable, omniauth_providers: [:google_oauth2]
+         :omniauthable, omniauth_providers: [ :google_oauth2 ]
 
   has_one  :zine_preference, dependent: :destroy
   has_many :user_feeds, dependent: :destroy
@@ -13,8 +13,22 @@ class User < ApplicationRecord
   validates_acceptance_of :terms_and_conditions, allow_nil: false, on: :create
   validates :email, presence: true, 'valid_email_2/email': true
 
+  def self.registration_enabled?
+    ActiveModel::Type::Boolean.new.cast(ENV.fetch("ENABLE_REGISTRATION", true))
+  end
+
   def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+    if (user = find_by(provider: auth.provider, uid: auth.uid))
+      return user
+    end
+
+    unless registration_enabled?
+      user = new
+      user.errors.add(:base, "Registration is currently disabled")
+      return user
+    end
+
+    create do |user|
       user.email = auth.info.email
       user.password = Devise.friendly_token[0, 20]
       user.name = auth.info.name

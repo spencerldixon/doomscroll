@@ -326,12 +326,14 @@ end
 
 
 Rails.application.config.to_prepare do
-  google_creds = Rails.application.credentials.google_oauth2 || {}
-  if google_creds[:client_id].present? && google_creds[:client_secret].present?
+  google_client_id = ENV.fetch("GOOGLE_OAUTH2_CLIENT_ID", nil)
+  google_client_secret = ENV.fetch("GOOGLE_OAUTH2_CLIENT_SECRET", nil)
+
+  if google_client_id.present? && google_client_secret.present?
     Devise.setup do |config|
       config.omniauth :google_oauth2,
-        google_creds[:client_id],
-        google_creds[:client_secret],
+        google_client_id,
+        google_client_secret,
         scope: "email,profile",
         prompt: "select_account",
         image_aspect_ratio: "square",

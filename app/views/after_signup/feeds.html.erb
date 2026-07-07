@@ -25,7 +25,7 @@
             data-controller="selection"
             data-selection-multiple-value="true"
             data-selection-name-value="feed_ids[]"
-            class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-8"
+            class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-8 max-h-[360px] overflow-y-auto pr-1"
           >
             <% @feeds.each do |feed| %>
               <% subscribed = @user_feed_ids.include?(feed.id) %>

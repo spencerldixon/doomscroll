@@ -7,8 +7,10 @@
 # Ignore bundler config.
 /.bundle
 
-# Ignore all environment files.
+# Track public dotenv defaults, but ignore local overrides.
 /.env*
+!/.env
+/.env*.local
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -33,7 +35,6 @@
 # Ignore key files for decrypting credentials and more.
 /config/*.key
 
-.env
 .DS_Store
 
 # Ignore any DB dumps
@@ -56,4 +57,3 @@ dump.rdb
 
 # Ignore key files for decrypting credentials and more.
 /config/credentials/*.key
-

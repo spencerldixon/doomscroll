@@ -3,7 +3,7 @@
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t doomscroll .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name doomscroll doomscroll
+# docker run -d -p 80:80 -e SECRET_KEY_BASE=<secret> --name doomscroll doomscroll
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
@@ -60,7 +60,7 @@ COPY . .
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
 
-# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
+# Precompiling assets for production without requiring SECRET_KEY_BASE
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 
