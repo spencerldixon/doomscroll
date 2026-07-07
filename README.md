@@ -26,6 +26,14 @@ We set `SELF_HOSTED=true` to determine a self hosted instance and toggle on/off 
 
 Setting `ENABLE_REGISTRATION=false` will disable new user sign ups.
 
+## Deploy
+
+You can use dotenv to set secrets and deploy via kamal
+
+```
+dotenv -f .env.production.local,.env kamal deploy
+```
+
 ## Contributing
 
 Contributions are welcome! Please keep them short and descriptive, no 50 file rewrites. I know I've vibe coded a lot of this as an initial hobby project, but PRs should be descriptive and prioritise code quality going forward. 

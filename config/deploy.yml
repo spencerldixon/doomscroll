@@ -113,7 +113,6 @@ accessories:
   db:
     image: postgres:17
     host: 77.42.95.209
-    port: "127.0.0.1:5432:5432"
     env:
       clear:
         POSTGRES_USER: doomscroll
