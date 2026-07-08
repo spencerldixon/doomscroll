@@ -40,7 +40,7 @@ registry:
 env:
   secret:
     - SECRET_KEY_BASE
-    - DOOMSCROLL_DATABASE_PASSWORD
+    - DB_PASSWORD
     - SELF_HOSTED
     - ENABLE_REGISTRATION
     - MAILER_DEFAULT_URL_HOST
@@ -66,9 +66,12 @@ env:
     # Set number of cores available to the application on each server (default: 1).
     # WEB_CONCURRENCY: 2
 
-    # Match this to any external database server to configure Active Record correctly
+    # Match these to any external database server to configure Active Record correctly.
     # Use doomscroll-db for a db accessory server on same machine via local kamal docker network.
     DB_HOST: doomscroll-db
+    DB_PORT: 5432
+    DB_USER: doomscroll
+    DB_NAME: doomscroll_production
 
     # Log everything from Rails
     # RAILS_LOG_LEVEL: debug
@@ -118,7 +121,7 @@ accessories:
         POSTGRES_USER: doomscroll
         POSTGRES_DB: doomscroll_production
       secret:
-        - POSTGRES_PASSWORD
+        - POSTGRES_PASSWORD:DB_PASSWORD
     directories:
       - data:/var/lib/postgresql/data
 #   redis:
