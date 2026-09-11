@@ -60,8 +60,12 @@ COPY . .
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
 RUN bundle exec bootsnap precompile -j 1 app/ lib/
 
-# Precompiling assets for production without requiring SECRET_KEY_BASE
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+# Precompiling assets for production without requiring SECRET_KEY_BASE or AR encryption keys
+RUN SECRET_KEY_BASE_DUMMY=1 \
+    ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=dummy \
+    ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=dummy \
+    ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=dummy \
+    ./bin/rails assets:precompile
 
 
 RUN rm -rf node_modules
