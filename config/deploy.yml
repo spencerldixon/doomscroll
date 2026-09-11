@@ -7,7 +7,7 @@ image: doomscroll
 # Deploy to these servers.
 servers:
   web:
-    - 77.42.95.209
+    - apps 
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -103,8 +103,8 @@ builder:
   #   - GITHUB_TOKEN
 
 # Use a different ssh user than root
-# ssh:
-#   user: app
+ssh:
+  user: kamal
 
 # Use accessory services (secrets come from .kamal/secrets).
 # accessories:
