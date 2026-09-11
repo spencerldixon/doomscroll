@@ -28,6 +28,28 @@
     </div>
 
     <div class="space-y-3">
+      <label class="label text-muted-foreground text-sm">How often should your zine arrive?</label>
+      <div
+        data-controller="selection"
+        data-selection-multiple-value="false"
+        data-selection-name-value="delivery_frequency"
+        class="grid grid-cols-3 gap-2"
+      >
+        <input type="hidden" name="delivery_frequency" value="<%= @zine_preference.delivery_frequency %>" data-selection-target="input">
+        <% ZinePreference::DELIVERY_FREQUENCY_LABELS.each do |frequency, label| %>
+          <div
+            data-selection-target="card"
+            data-id="<%= frequency %>"
+            data-action="click->selection#toggle"
+            class="flex flex-col items-center justify-center gap-1 p-3 border border-border rounded-lg cursor-pointer hover:border-violet-400 transition-all select-none <%= 'selected' if @zine_preference.delivery_frequency == frequency %>"
+          >
+            <span class="text-sm font-semibold"><%= label %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="space-y-3">
       <label class="label text-muted-foreground text-sm">Which day of the week should your zine arrive?</label>
       <div
         data-controller="selection"

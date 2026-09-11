@@ -323,21 +323,3 @@ Rails.application.config.to_prepare do
   Devise::UnlocksController.layout "devise"
   Devise::PasswordsController.layout "devise"
 end
-
-
-Rails.application.config.to_prepare do
-  google_client_id = ENV.fetch("GOOGLE_OAUTH2_CLIENT_ID", nil)
-  google_client_secret = ENV.fetch("GOOGLE_OAUTH2_CLIENT_SECRET", nil)
-
-  if google_client_id.present? && google_client_secret.present?
-    Devise.setup do |config|
-      config.omniauth :google_oauth2,
-        google_client_id,
-        google_client_secret,
-        scope: "email,profile",
-        prompt: "select_account",
-        image_aspect_ratio: "square",
-        image_size: 200
-    end
-  end
-end

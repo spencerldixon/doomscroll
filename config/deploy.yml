@@ -40,7 +40,6 @@ registry:
 env:
   secret:
     - SECRET_KEY_BASE
-    - DB_PASSWORD
     - SELF_HOSTED
     - ENABLE_REGISTRATION
     - MAILER_DEFAULT_URL_HOST
@@ -51,8 +50,6 @@ env:
     - SMTP_DOMAIN
     - SMTP_USERNAME
     - SMTP_PASSWORD
-    - GOOGLE_OAUTH2_CLIENT_ID
-    - GOOGLE_OAUTH2_CLIENT_SECRET
     - TELEGRAM_BOT_TOKEN
     - TELEGRAM_CHAT_ID
   clear:
@@ -68,10 +65,6 @@ env:
 
     # Match these to any external database server to configure Active Record correctly.
     # Use doomscroll-db for a db accessory server on same machine via local kamal docker network.
-    DB_HOST: doomscroll-db
-    DB_PORT: 5432
-    DB_USER: doomscroll
-    DB_NAME: doomscroll_production
 
     # Log everything from Rails
     # RAILS_LOG_LEVEL: debug
@@ -82,7 +75,7 @@ aliases:
   console: app exec --interactive --reuse "bin/rails console"
   shell: app exec --interactive --reuse "bash"
   logs: app logs -f
-  dbc: app exec --interactive --reuse "bin/rails dbconsole --include-password"
+  dbc: app exec --interactive --reuse "bin/rails dbconsole"
 
 # Use a persistent storage volume for sqlite database files and local Active Storage files.
 # Recommended to change this to a mounted volume path that is backed up off server.
@@ -112,18 +105,7 @@ builder:
 #   user: app
 
 # Use accessory services (secrets come from .kamal/secrets).
-accessories:
-  db:
-    image: postgres:17
-    host: 77.42.95.209
-    env:
-      clear:
-        POSTGRES_USER: doomscroll
-        POSTGRES_DB: doomscroll_production
-      secret:
-        - POSTGRES_PASSWORD:DB_PASSWORD
-    directories:
-      - data:/var/lib/postgresql/data
+# accessories:
 #   redis:
 #     image: valkey/valkey:8
 #     host: 192.168.0.2

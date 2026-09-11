@@ -18,12 +18,12 @@ class ApplicationController < ActionController::Base
 
   def require_setup_complete!
     return unless current_user
-    redirect_to after_signup_path(:name) unless current_user.setup_complete?
+    redirect_to onboarding_path(:name) unless current_user.setup_complete?
   end
 
   def after_sign_in_path_for(user)
     if user.zine_preference.nil?
-      after_signup_path(:name)
+      onboarding_path(:name)
     else
       authenticated_root_path
     end

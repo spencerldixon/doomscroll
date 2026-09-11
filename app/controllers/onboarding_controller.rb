@@ -1,4 +1,4 @@
-class AfterSignupController < ApplicationController
+class OnboardingController < ApplicationController
   include Wicked::Wizard
 
   skip_before_action :require_setup_complete!
@@ -50,11 +50,12 @@ class AfterSignupController < ApplicationController
     when :delivery
       @zine_preference = current_user.zine_preference || current_user.build_zine_preference
       @zine_preference.delivery_day = params[:delivery_day]
+      @zine_preference.delivery_frequency = params[:delivery_frequency]
 
-      if @zine_preference.delivery_day.present? && @zine_preference.save
-        redirect_to after_signup_complete_path
+      if @zine_preference.delivery_day.present? && @zine_preference.delivery_frequency.present? && @zine_preference.save
+        redirect_to onboarding_complete_path
       else
-        flash.now[:alert] = "Please pick a delivery day"
+        flash.now[:alert] = "Please pick a delivery day and schedule"
         render_wizard nil, status: :unprocessable_entity
       end
     end

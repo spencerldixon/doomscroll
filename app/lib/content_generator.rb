@@ -23,26 +23,26 @@ class ContentGenerator
     article_pool = []
 
     articles_by_feed = feeds.each_with_object({}) do |feed, hash|
-      rss_feed = FeedUtils.get_feed(feed.url)
+      rss_feed = GenericFeed.fetch(feed.url)
 
       next if rss_feed.nil?
 
       articles = rss_feed.items.filter_map do |item|
-        published_at = FeedUtils.get_item_date(item)
+        published_at = item.published_at
         next unless published_at && published_at > since
 
-        body = FeedUtils.get_content(item).to_s.strip
+        body = item.content.to_s.strip
         word_count = body.split(/\s+/).size
 
-        next if word_count < MINIMUM_ARTICLE_WORD_COUNT 
+        next if word_count < MINIMUM_ARTICLE_WORD_COUNT
 
         Article.new(
-          title: FeedUtils.get_title(item).to_s.strip,
+          title: item.title.to_s.strip,
           body: body,
-          url: FeedUtils.get_link(item).to_s.strip,
+          url: item.link.to_s.strip,
           source: feed.name,
-          published_at: FeedUtils.get_item_date(item),
-          author: FeedUtils.get_item_author(item),
+          published_at: item.published_at,
+          author: item.author,
           word_count: word_count
         )
       end

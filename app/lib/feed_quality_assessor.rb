@@ -14,10 +14,8 @@ class FeedQualityAssessor
 
   Result = Data.define(:quality, :sample_size, :avg_chars)
 
-  def initialize(url)
-    @url = url
-    @feed = FeedUtils.get_feed(url)
-    @posts = @feed.items
+  def initialize(feed)
+    @posts = feed.items
   end
 
   def rate
@@ -45,7 +43,7 @@ class FeedQualityAssessor
 
   def score_post(item)
     # Takes a single blog post item and returns score metrics
-    content         = FeedUtils.get_content_text(item)
+    content         = item.content_text
     content_length  = content.length
     truncated       = TRUNCATION_PATTERNS.any? { content.match?(_1) }
 

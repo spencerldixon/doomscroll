@@ -4,24 +4,31 @@ class DailyIssueGeneratorJob < ApplicationJob
   def perform(date = Date.current)
     date = date.to_date
 
-    due_users(date).find_each do |user|
+    due_preferences(date).find_each do |preference|
+      next unless preference.due_on?(date)
+
+      user = preference.user
       next if issue_already_created?(user, date)
 
-      issue = user.issues.create!
+      issue = nil
+      ZinePreference.transaction do
+        issue = user.issues.create!
+        preference.update!(last_delivered_on: date)
+      end
+
       IssueMailer.with(issue: issue).daily_issue.deliver_later
     rescue StandardError => e
-      Rails.logger.error("DailyIssueGeneratorJob failed for user #{user.id}: #{e.class} #{e.message}")
+      Rails.logger.error("DailyIssueGeneratorJob failed for user #{preference.user_id}: #{e.class} #{e.message}")
     end
   end
 
   private
 
-  def due_users(date)
-    User
-      .joins(:zine_preference)
-      .where(zine_preferences: { delivery_day: date.wday })
-      .where.associated(:user_feeds)
-      .distinct
+  def due_preferences(date)
+    ZinePreference
+      .where(delivery_day: date.wday)
+      .where(user_id: UserFeed.select(:user_id))
+      .includes(:user)
   end
 
   def issue_already_created?(user, date)

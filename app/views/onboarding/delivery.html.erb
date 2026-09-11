@@ -3,14 +3,34 @@
   <%= render "shared/flash" %>
   <div class="flex flex-col items-center justify-center flex-1 px-4 py-16">
     <div class="w-full max-w-lg space-y-8">
-      <%= render "after_signup/progress", step: 3 %>
+      <%= render "onboarding/progress", step: 3 %>
 
       <div class="space-y-2">
-        <h1 class="text-3xl font-semibold">Pick your delivery day</h1>
-        <p class="text-muted-foreground">Which day of the week should your zine arrive?</p>
+        <h1 class="text-3xl font-semibold">Pick your delivery schedule</h1>
+        <p class="text-muted-foreground">How often should your zine arrive, and on which day?</p>
       </div>
 
       <%= form_with url: wizard_path, method: :put do |f| %>
+        <% selected_frequency = @zine_preference.delivery_frequency || "weekly" %>
+        <div
+          data-controller="selection"
+          data-selection-multiple-value="false"
+          data-selection-name-value="delivery_frequency"
+          class="grid grid-cols-3 gap-2 mb-8"
+        >
+          <input type="hidden" name="delivery_frequency" value="<%= selected_frequency %>" data-selection-target="input">
+          <% ZinePreference::DELIVERY_FREQUENCY_LABELS.each do |frequency, label| %>
+            <div
+              data-selection-target="card"
+              data-id="<%= frequency %>"
+              data-action="click->selection#toggle"
+              class="flex flex-col items-center justify-center gap-1 p-3 border border-border rounded-lg cursor-pointer hover:border-violet-400 transition-all select-none <%= 'selected' if selected_frequency == frequency %>"
+            >
+              <span class="text-sm font-semibold"><%= label %></span>
+            </div>
+          <% end %>
+        </div>
+
         <div
           data-controller="selection"
           data-selection-multiple-value="false"

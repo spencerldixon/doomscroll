@@ -54,7 +54,63 @@ RSpec.describe DailyIssueGeneratorJob, type: :job do
     expect(ActionMailer::Base.deliveries).to be_empty
   end
 
-  def create_user_with_delivery(email:, delivery_day:)
+  it "skips a biweekly user one week after their last delivery" do
+    create_user_with_delivery(
+      email: "biweekly@example.com",
+      delivery_day: Date.current.wday,
+      delivery_frequency: "biweekly",
+      last_delivered_on: Date.current - 7
+    )
+
+    expect {
+      perform_enqueued_jobs { described_class.perform_now(Date.current) }
+    }.not_to change(Issue, :count)
+  end
+
+  it "delivers to a biweekly user two weeks after their last delivery" do
+    create_user_with_delivery(
+      email: "biweekly@example.com",
+      delivery_day: Date.current.wday,
+      delivery_frequency: "biweekly",
+      last_delivered_on: Date.current - 14
+    )
+
+    expect {
+      perform_enqueued_jobs { described_class.perform_now(Date.current) }
+    }.to change(Issue, :count).by(1)
+  end
+
+  it "skips a monthly user three weeks after their last delivery" do
+    create_user_with_delivery(
+      email: "monthly@example.com",
+      delivery_day: Date.current.wday,
+      delivery_frequency: "monthly",
+      last_delivered_on: Date.current - 21
+    )
+
+    expect {
+      perform_enqueued_jobs { described_class.perform_now(Date.current) }
+    }.not_to change(Issue, :count)
+  end
+
+  it "records the delivery date so the next cycle counts from it" do
+    user = create_user_with_delivery(email: "due@example.com", delivery_day: Date.current.wday)
+
+    perform_enqueued_jobs { described_class.perform_now(Date.current) }
+
+    expect(user.zine_preference.reload.last_delivered_on).to eq(Date.current)
+  end
+
+  it "delivers on the first delivery day even when an unscheduled issue exists" do
+    user = create_user_with_delivery(email: "seeded@example.com", delivery_day: Date.current.wday)
+    user.issues.create!(content: []).update_column(:published_at, 3.days.ago)
+
+    expect {
+      perform_enqueued_jobs { described_class.perform_now(Date.current) }
+    }.to change(Issue, :count).by(1)
+  end
+
+  def create_user_with_delivery(email:, delivery_day:, delivery_frequency: "weekly", last_delivered_on: nil)
     user = User.create!(
       email: email,
       password: "password123",
@@ -63,7 +119,12 @@ RSpec.describe DailyIssueGeneratorJob, type: :job do
       confirmed_at: Time.current
     )
 
-    user.create_zine_preference!(zine_name: "Daily Zine", delivery_day: delivery_day)
+    user.create_zine_preference!(
+      zine_name: "Daily Zine",
+      delivery_day: delivery_day,
+      delivery_frequency: delivery_frequency,
+      last_delivered_on: last_delivered_on
+    )
     feed = Feed.create!(name: "Feed #{email}", url: "https://#{email}/rss.xml")
     user.user_feeds.create!(feed: feed)
     user

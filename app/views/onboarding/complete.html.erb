@@ -11,7 +11,7 @@
     <%# The message %>
     <div class="space-y-2">
       <p class="text-3xl font-semibold leading-snug tracking-tight">
-      Every <span class="text-lime-400 bg-slate-900 px-2"><%= current_user.next_issue_day %></span> we'll drop your zine in your inbox at <%= current_user.email %>.
+      <span class="text-lime-400 bg-slate-900 px-2"><%= current_user.delivery_cadence_label %></span> we'll drop your zine in your inbox at <%= current_user.email %>.
       </p>
       <p class="text-muted-foreground">
       Print it, fold it, take a photo, send it to us 

@@ -10,14 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_11_000000) do
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_catalog.plpgsql"
-
-  # Custom types defined in this database.
-  # Note that some types may not work with other database engines. Be careful if changing database.
-  create_enum "qualities", ["unknown", "empty", "partial", "full"]
-
+ActiveRecord::Schema[8.1].define(version: 2026_09_09_120000) do
   create_table "feeds", force: :cascade do |t|
     t.string "category"
     t.datetime "created_at", null: false
@@ -25,7 +18,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_000000) do
     t.string "domain"
     t.string "name"
     t.boolean "public", default: false, null: false
-    t.enum "quality", default: "unknown", null: false, enum_type: "qualities"
+    t.string "quality", default: "unknown", null: false
     t.datetime "updated_at", null: false
     t.string "url"
     t.index ["category"], name: "index_feeds_on_category"
@@ -34,13 +27,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_000000) do
   end
 
   create_table "issues", force: :cascade do |t|
-    t.jsonb "content", default: [], null: false
+    t.json "content", default: [], null: false
     t.datetime "created_at", null: false
     t.integer "number", null: false
     t.datetime "published_at", null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.integer "user_id", null: false
     t.index ["user_id", "number"], name: "index_issues_on_user_id_and_number", unique: true
     t.index ["user_id"], name: "index_issues_on_user_id"
   end
@@ -167,8 +160,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_000000) do
   end
 
   create_table "user_feeds", id: false, force: :cascade do |t|
-    t.bigint "feed_id", null: false
-    t.bigint "user_id", null: false
+    t.integer "feed_id", null: false
+    t.integer "user_id", null: false
     t.index ["feed_id"], name: "index_user_feeds_on_feed_id"
     t.index ["user_id", "feed_id"], name: "index_user_feeds_on_user_id_and_feed_id", unique: true
     t.index ["user_id"], name: "index_user_feeds_on_user_id"
@@ -208,8 +201,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_000000) do
   create_table "zine_preferences", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "delivery_day"
+    t.string "delivery_frequency", default: "weekly", null: false
+    t.date "last_delivered_on"
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.integer "user_id", null: false
     t.string "zine_name"
     t.index ["user_id"], name: "index_zine_preferences_on_user_id", unique: true
   end

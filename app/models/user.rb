@@ -1,7 +1,6 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :lockable, :confirmable, :trackable,
-         :omniauthable, omniauth_providers: [ :google_oauth2 ]
+         :recoverable, :rememberable, :validatable, :lockable, :confirmable, :trackable
 
   has_one  :zine_preference, dependent: :destroy
   has_many :user_feeds, dependent: :destroy
@@ -14,47 +13,50 @@ class User < ApplicationRecord
   validates :email, presence: true, 'valid_email_2/email': true
 
   def self.registration_enabled?
+    return false if exists?
+
     ActiveModel::Type::Boolean.new.cast(ENV.fetch("ENABLE_REGISTRATION", true))
-  end
-
-  def self.from_omniauth(auth)
-    if (user = find_by(provider: auth.provider, uid: auth.uid))
-      return user
-    end
-
-    unless registration_enabled?
-      user = new
-      user.errors.add(:base, "Registration is currently disabled")
-      return user
-    end
-
-    create do |user|
-      user.email = auth.info.email
-      user.password = Devise.friendly_token[0, 20]
-      user.name = auth.info.name
-      user.image = auth.info.image
-      user.terms_and_conditions = true
-      user.skip_confirmation! if user.respond_to?(:skip_confirmation!)
-    end
   end
 
   def setup_complete?
     zine_preference&.zine_name.present? && zine_preference&.delivery_day.present? && user_feeds.any?
   end
 
+  CADENCE_LABELS = {
+    "weekly" => "Every %{day}",
+    "biweekly" => "Every other %{day}",
+    "monthly" => "Every 4 weeks on %{day}"
+  }.freeze
+
   def next_issue_day
     Date::DAYNAMES[zine_preference&.delivery_day]
   end
 
-  def days_until_next_issue
-    return nil unless zine_preference.delivery_day
+  def delivery_cadence_label
+    return nil unless zine_preference&.delivery_day
 
-    days_until = (zine_preference.delivery_day - Date.today.wday) % 7
-
-    days_until == 0 ? 7 : days_until
+    format(CADENCE_LABELS.fetch(zine_preference.delivery_frequency), day: next_issue_day)
   end
 
+  def days_until_next_issue
+    return nil unless zine_preference&.delivery_day
+
+    (next_issue_date - Date.current).to_i
+  end
+
+  # The next delivery_day that is at least one full interval on from the last
+  # delivery. A user who has never been delivered to gets the next one outright.
   def next_issue_date
-    Date.today + days_until_next_issue
+    return nil unless zine_preference&.delivery_day
+
+    date = Date.current + ((zine_preference.delivery_day - Date.current.wday) % 7)
+    date += 7 if date == Date.current
+
+    if zine_preference.last_delivered_on
+      earliest = zine_preference.last_delivered_on + zine_preference.delivery_interval_days
+      date += 7 while date < earliest
+    end
+
+    date
   end
 end

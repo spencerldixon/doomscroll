@@ -12,42 +12,89 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe ".from_omniauth" do
-    let(:auth) do
-      OmniAuth::AuthHash.new(
-        provider: "google_oauth2",
-        uid: "google-123",
-        info: {
-          email: "reader@example.com",
-          name: "Reader",
-          image: "https://example.com/avatar.png"
-        }
-      )
+  describe ".registration_enabled?" do
+    it "is true when no user exists yet" do
+      ENV["ENABLE_REGISTRATION"] = "true"
+
+      expect(User.registration_enabled?).to be true
     end
 
-    it "does not create a new user when registration is disabled" do
-      ENV["ENABLE_REGISTRATION"] = "false"
-
-      expect do
-        @user = described_class.from_omniauth(auth)
-      end.not_to change(User, :count)
-
-      expect(@user).to be_new_record
-      expect(@user.errors[:base]).to include("Registration is currently disabled")
-    end
-
-    it "returns an existing OAuth user when registration is disabled" do
-      ENV["ENABLE_REGISTRATION"] = "false"
-      existing_user = described_class.create!(
+    it "is false once a user exists, regardless of ENABLE_REGISTRATION" do
+      ENV["ENABLE_REGISTRATION"] = "true"
+      User.create!(
         email: "reader@example.com",
         password: "password123",
-        provider: "google_oauth2",
-        uid: "google-123",
         terms_and_conditions: true,
         confirmed_at: Time.current
       )
 
-      expect(described_class.from_omniauth(auth)).to eq(existing_user)
+      expect(User.registration_enabled?).to be false
     end
+
+    it "is false when disabled via ENV even with no users" do
+      ENV["ENABLE_REGISTRATION"] = "false"
+
+      expect(User.registration_enabled?).to be false
+    end
+  end
+
+  include ActiveSupport::Testing::TimeHelpers
+
+  describe "#next_issue_date" do
+    # Monday 2026-06-22; Wednesday is wday 3.
+    around { |example| travel_to(Time.zone.local(2026, 6, 22, 9, 0, 0)) { example.run } }
+
+    it "is the next occurrence of the delivery day for a user who has never been delivered to" do
+      user = build_user(delivery_day: 3, delivery_frequency: "monthly")
+
+      expect(user.next_issue_date).to eq(Date.new(2026, 6, 24))
+      expect(user.days_until_next_issue).to eq(2)
+    end
+
+    it "is the following week for a weekly user delivered to last week" do
+      user = build_user(delivery_day: 3, delivery_frequency: "weekly", last_delivered_on: Date.new(2026, 6, 17))
+
+      expect(user.next_issue_date).to eq(Date.new(2026, 6, 24))
+    end
+
+    it "skips a week for a biweekly user delivered to last week" do
+      user = build_user(delivery_day: 3, delivery_frequency: "biweekly", last_delivered_on: Date.new(2026, 6, 17))
+
+      expect(user.next_issue_date).to eq(Date.new(2026, 7, 1))
+    end
+
+    it "lands four weeks out for a monthly user delivered to last week" do
+      user = build_user(delivery_day: 3, delivery_frequency: "monthly", last_delivered_on: Date.new(2026, 6, 17))
+
+      expect(user.next_issue_date).to eq(Date.new(2026, 7, 15))
+    end
+  end
+
+  describe "#delivery_cadence_label" do
+    it "describes each frequency in terms of the delivery day" do
+      expect(build_user(delivery_day: 3, delivery_frequency: "weekly").delivery_cadence_label)
+        .to eq("Every Wednesday")
+      expect(build_user(delivery_day: 3, delivery_frequency: "biweekly").delivery_cadence_label)
+        .to eq("Every other Wednesday")
+      expect(build_user(delivery_day: 3, delivery_frequency: "monthly").delivery_cadence_label)
+        .to eq("Every 4 weeks on Wednesday")
+    end
+  end
+
+  def build_user(delivery_day:, delivery_frequency: "weekly", last_delivered_on: nil)
+    user = User.create!(
+      email: "reader#{SecureRandom.hex(4)}@example.com",
+      password: "password123",
+      password_confirmation: "password123",
+      terms_and_conditions: true,
+      confirmed_at: Time.current
+    )
+    user.create_zine_preference!(
+      zine_name: "Daily Zine",
+      delivery_day: delivery_day,
+      delivery_frequency: delivery_frequency,
+      last_delivered_on: last_delivered_on
+    )
+    user
   end
 end

@@ -17,11 +17,11 @@ class FeedDiscoverJob < ApplicationJob
     raise "Could not find valid feed for #{feed.url}" unless feed_url
 
     # Grab the feed and fetch details
-    rss_feed    = FeedUtils.get_feed(feed_url)
-    name        = FeedUtils.get_feed_name(rss_feed)
-    description = FeedUtils.get_feed_description(rss_feed)
+    rss_feed    = GenericFeed.fetch(feed_url)
+    name        = rss_feed.title
+    description = rss_feed.description
     domain      = FeedUtils.get_base_domain(feed_url)
-    quality     = FeedQualityAssessor.new(feed_url).rate
+    quality     = FeedQualityAssessor.new(rss_feed).rate
 
     # Update the record
     feed.update!(

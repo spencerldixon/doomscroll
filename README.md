@@ -22,9 +22,26 @@ Use `.env.development.local` or `.env.production.local` to set overrides and sto
 
 Doomscroll can be self hosted on your server of choice. We use Kamal to deploy.
 
-We set `SELF_HOSTED=true` to determine a self hosted instance and toggle on/off features like subscriptions and telegram notifications (toggled off in self hosted mode).
+Set `SELF_HOSTED=true` to mark the instance as self hosted.
 
-Setting `ENABLE_REGISTRATION=false` will disable new user sign ups.
+### Single user
+
+A self hosted instance supports exactly one account:
+
+- Until an account exists, the root path shows the sign up page.
+- Once an account exists, sign up is automatically disabled and the root path shows the login page instead.
+
+Setting `ENABLE_REGISTRATION=false` lets you force sign up off manually, e.g. while you're still finishing server setup and don't want anyone racing you to create the first account.
+
+### Required environment
+
+At minimum you'll need to set:
+
+- `SECRET_KEY_BASE` — generate one with `bin/rails secret`.
+- `MAILER_DEFAULT_URL_HOST` (and `MAILER_DEFAULT_URL_PORT` if not 80/443) — used to build links in emails.
+- `SMTP_ADDRESS`, `SMTP_PORT`, `SMTP_DOMAIN`, `SMTP_USERNAME`, `SMTP_PASSWORD` — required to send the account confirmation email. You get a 2 day grace period to confirm before sign in is blocked.
+
+`TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are optional — leave them blank to skip Telegram notifications for sign ups and production error reports, or set both to enable them.
 
 ## Deploy
 
