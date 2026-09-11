@@ -12,7 +12,7 @@ class User < ApplicationRecord
   def self.registration_enabled?
     return false if exists?
 
-    ActiveModel::Type::Boolean.new.cast(ENV.fetch("ENABLE_REGISTRATION", true))
+    ActiveModel::Type::Boolean.new.cast(ENV["ENABLE_REGISTRATION"].presence || true)
   end
 
   def setup_complete?
