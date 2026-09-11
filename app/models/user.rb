@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :lockable, :confirmable, :trackable
+         :recoverable, :rememberable, :validatable, :lockable, :trackable
 
   has_one  :zine_preference, dependent: :destroy
   has_many :user_feeds, dependent: :destroy
@@ -13,6 +13,12 @@ class User < ApplicationRecord
     return false if exists?
 
     ActiveModel::Type::Boolean.new.cast(ENV["ENABLE_REGISTRATION"].presence || true)
+  end
+
+  # Deliver Devise emails (confirmation, reset, etc.) through Active Job so a
+  # slow or misconfigured mailer can't turn into a 500 on the request thread.
+  def send_devise_notification(notification, *args)
+    devise_mailer.send(notification, self, *args).deliver_later
   end
 
   def setup_complete?
