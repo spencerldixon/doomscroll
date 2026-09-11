@@ -23,6 +23,13 @@ servers:
 proxy:
   ssl: true
   host: app.doomscroll.press
+  run:
+    options:
+      health-cmd: "kamal-proxy list || exit 1"
+      health-interval: 10s
+      health-timeout: 5s
+      health-retries: 3
+      health-start-period: 5s
 
 # Where you keep your container images.
 registry:
