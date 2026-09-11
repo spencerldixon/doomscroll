@@ -27,7 +27,7 @@ module Doomscroll
 
     # Remove trailing slashes from urls
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
-      r301 %r{^/(.*)/$}, '/$1'
+      r301 %r{^/(.*)/$}, "/$1"
     end
 
     config.mission_control.jobs.http_basic_auth_enabled = false

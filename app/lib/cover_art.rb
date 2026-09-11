@@ -22,7 +22,7 @@ class CoverArt
   W = 300.0
   H = 400.0
 
-  def initialize(seed=Random.random_number * 100)
+  def initialize(seed = Random.random_number * 100)
     @rng     = Random.new(seed.to_i)
     @noise   = ValueNoise.new(seed.to_i)
     @palette = PALETTES[@rng.rand(PALETTES.size)]
@@ -91,7 +91,7 @@ class CoverArt
 
     n      = 2**order
     margin = 24.0
-    step   = ([W, H].min - 2 * margin) / (n - 1)
+    step   = ([ W, H ].min - 2 * margin) / (n - 1)
     side   = step * (n - 1)
     t      = Turtle.new(x: (W - side) / 2, y: (H - side) / 2)
 
@@ -144,7 +144,7 @@ class CoverArt
       when "F" then t.forward(len)
       when "+" then t.right(angle)
       when "-" then t.left(angle)
-      when "[" then stack.push([t.position, t.h])
+      when "[" then stack.push([ t.position, t.h ])
       when "]"
         (pos, h) = stack.pop
         t.jump(pos[0], pos[1]).setheading(h)
@@ -159,7 +159,7 @@ class CoverArt
     cx    = W / 2
     cy    = H / 2
     count = 24
-    gap   = ([W, H].min / 2.0 - 8) / count
+    gap   = ([ W, H ].min / 2.0 - 8) / count
 
     (1..count).each do |k|
       pts = []
@@ -167,7 +167,7 @@ class CoverArt
         a  = deg * Math::PI / 180
         nn = @noise.noise(Math.cos(a) * 0.9 + k * 0.35, Math.sin(a) * 0.9 + k * 0.35)
         r  = k * gap + (nn - 0.5) * 16
-        pts << [cx + r * Math.cos(a), cy + r * Math.sin(a)]
+        pts << [ cx + r * Math.cos(a), cy + r * Math.sin(a) ]
       end
       pts << pts.first
       paths << pts

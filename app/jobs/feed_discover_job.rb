@@ -9,9 +9,9 @@ class FeedDiscoverJob < ApplicationJob
     # Attempt to validate/discover feed from given url
     feed_url =  if FeedUtils.valid_feed?(feed.url)
                   feed.url
-                else
+    else
                   FeedUtils.discover_feed_from_url(feed.url)
-                end
+    end
 
     # Raise if no valid feed found
     raise "Could not find valid feed for #{feed.url}" unless feed_url

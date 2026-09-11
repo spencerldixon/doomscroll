@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:terms_and_conditions])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :terms_and_conditions ])
   end
 
   def require_setup_complete!

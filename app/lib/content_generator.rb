@@ -1,4 +1,4 @@
-require 'set'
+require "set"
 
 MAX_WORDS = 10_000
 MINIMUM_ARTICLE_WORD_COUNT = 100

@@ -4,11 +4,11 @@ class Feed < ApplicationRecord
 
   # Enum for quality ratings
   attribute :quality, :string
-  enum :quality, { 
-    unknown: "unknown", 
-    empty: "empty", 
-    partial: "partial", 
-    full: "full" 
+  enum :quality, {
+    unknown: "unknown",
+    empty: "empty",
+    partial: "partial",
+    full: "full"
   }, default: "unknown"
 
   # Scopes

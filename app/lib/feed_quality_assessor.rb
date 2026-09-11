@@ -6,11 +6,11 @@ class FeedQualityAssessor
     /click here (to read|for more)/i,
     /keep reading/i,
     /more »/i,
-    /\[[\.…]+\]/,
+    /\[[\.…]+\]/
   ].freeze
 
   FULL_TEXT_MIN_CHARS = 500
-  SAMPLE_SIZE = 10 
+  SAMPLE_SIZE = 10
 
   Result = Data.define(:quality, :sample_size, :avg_chars)
 

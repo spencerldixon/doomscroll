@@ -5,6 +5,6 @@ class CreateUserFeeds < ActiveRecord::Migration[8.1]
       t.references :feed, null: false, foreign_key: true
     end
 
-    add_index :user_feeds, [:user_id, :feed_id], unique: true
+    add_index :user_feeds, [ :user_id, :feed_id ], unique: true
   end
 end

@@ -96,7 +96,7 @@ RSpec.describe "Feeds", type: :request do
   end
 
   def uploaded_opml(content)
-    file = Tempfile.new(["feeds", ".opml"])
+    file = Tempfile.new([ "feeds", ".opml" ])
     file.write(content)
     file.rewind
 

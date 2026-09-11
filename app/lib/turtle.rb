@@ -10,13 +10,13 @@ class Turtle
     @h = heading.to_f
     @pen = true
     @paths = []
-    @cur = [[@x, @y]]
+    @cur = [ [ @x, @y ] ]
   end
 
   attr_reader :h
 
   def position
-    [@x, @y]
+    [ @x, @y ]
   end
 
   def setheading(deg)
@@ -39,7 +39,7 @@ class Turtle
     r = @h * Math::PI / 180.0
     @x += Math.cos(r) * dist
     @y += Math.sin(r) * dist
-    @cur << [@x, @y] if @pen
+    @cur << [ @x, @y ] if @pen
     self
   end
   alias fd forward
@@ -48,7 +48,7 @@ class Turtle
   def goto(x, y)
     @x = x.to_f
     @y = y.to_f
-    @cur << [@x, @y] if @pen
+    @cur << [ @x, @y ] if @pen
     self
   end
 
@@ -57,7 +57,7 @@ class Turtle
     flush
     @x = x.to_f
     @y = y.to_f
-    @cur = [[@x, @y]]
+    @cur = [ [ @x, @y ] ]
     self
   end
 
@@ -70,7 +70,7 @@ class Turtle
 
   def pendown
     @pen = true
-    @cur = [[@x, @y]]
+    @cur = [ [ @x, @y ] ]
     self
   end
 

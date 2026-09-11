@@ -37,7 +37,7 @@ RSpec.describe DailyIssueGeneratorJob, type: :job do
     email = ActionMailer::Base.deliveries.sole
 
     expect(issue.published_at.to_date).to eq(Date.current)
-    expect(email.to).to eq([due_user.email])
+    expect(email.to).to eq([ due_user.email ])
     expect(email.body.encoded).to include("/issues/#{issue.id}?token=")
   end
 

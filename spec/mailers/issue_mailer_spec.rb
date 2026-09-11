@@ -27,7 +27,7 @@ RSpec.describe IssueMailer, type: :mailer do
 
       mail = described_class.with(issue: issue).daily_issue
 
-      expect(mail.to).to eq([user.email])
+      expect(mail.to).to eq([ user.email ])
       expect(mail.subject).to eq("Your Reader Weekly issue ##{issue.number} is off the press")
       expect(mail.body.encoded).to include("doomscroll.press")
       expect(mail.body.encoded).to include("Your new issue is ready to print")
