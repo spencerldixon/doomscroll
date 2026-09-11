@@ -1,6 +1,6 @@
 # DOOMSCROLL
 
-Takes your RSS feeds and turns them into a beautifully formatted print-at-home zine.
+Turn your RSS into a beautifully formatted print-at-home zine. Less scroll. More soul.
 
 ## Installation
 
@@ -17,12 +17,9 @@ Public, non-secret sensible defaults live in `.env`, we commit this as guidance 
 
 Use `.env.development.local` or `.env.production.local` to set overrides and store any secrets. These are gitignored.
 
-
 ## Self Hosting
 
 Doomscroll can be self hosted on your server of choice. We use Kamal to deploy.
-
-Set `SELF_HOSTED=true` to mark the instance as self hosted.
 
 ### Single user
 
@@ -38,10 +35,11 @@ Setting `ENABLE_REGISTRATION=false` lets you force sign up off manually, e.g. wh
 At minimum you'll need to set:
 
 - `SECRET_KEY_BASE` — generate one with `bin/rails secret`.
+- `ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY`, `ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY`, `ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT` — generate with `bin/rails db:encryption:init`. Used to encrypt secrets stored in the database, like a Telegram bot token entered in preferences.
 - `MAILER_DEFAULT_URL_HOST` (and `MAILER_DEFAULT_URL_PORT` if not 80/443) — used to build links in emails.
 - `SMTP_ADDRESS`, `SMTP_PORT`, `SMTP_DOMAIN`, `SMTP_USERNAME`, `SMTP_PASSWORD` — required to send the account confirmation email. You get a 2 day grace period to confirm before sign in is blocked.
 
-`TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are optional — leave them blank to skip Telegram notifications for sign ups and production error reports, or set both to enable them.
+`TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are optional — set both to offer Telegram as a ready-to-go zine delivery channel, or leave them blank and let the reader set their own bot token and chat id in onboarding or preferences instead.
 
 ## Deploy
 

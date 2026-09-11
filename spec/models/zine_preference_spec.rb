@@ -127,6 +127,59 @@ RSpec.describe ZinePreference, type: :model do
     end
   end
 
+  describe "delivery_method" do
+    it "defaults to email" do
+      expect(build_preference.delivery_method).to eq("email")
+    end
+
+    it "rejects an unknown delivery method" do
+      preference = build_preference
+      preference.delivery_method = "carrier_pigeon"
+
+      expect(preference).not_to be_valid
+      expect(preference.errors[:delivery_method]).to be_present
+    end
+
+    context "when the delivery method is telegram" do
+      it "requires a bot token and chat id when the server has none configured" do
+        preference = build_preference
+        preference.delivery_method = "telegram"
+
+        expect(preference).not_to be_valid
+        expect(preference.errors[:base]).to be_present
+      end
+
+      it "is valid once a bot token and chat id are set" do
+        preference = build_preference
+        preference.delivery_method = "telegram"
+        preference.telegram_bot_token = "bot-token"
+        preference.telegram_chat_id = "12345"
+
+        expect(preference).to be_valid
+      end
+
+      it "is valid without per-user credentials when the server already has a bot configured" do
+        allow(DeliveryChannels).to receive(:telegram_available?).and_return(true)
+        preference = build_preference
+        preference.delivery_method = "telegram"
+
+        expect(preference).to be_valid
+      end
+    end
+
+    it "encrypts the telegram bot token at rest" do
+      preference = build_preference
+      preference.update!(delivery_method: "telegram", telegram_bot_token: "super-secret", telegram_chat_id: "12345")
+
+      raw_value = ZinePreference.connection.select_value(
+        "SELECT telegram_bot_token FROM zine_preferences WHERE id = #{preference.id}"
+      )
+
+      expect(raw_value).not_to eq("super-secret")
+      expect(preference.reload.telegram_bot_token).to eq("super-secret")
+    end
+  end
+
   def build_preference(delivery_day: 3, delivery_frequency: "weekly", last_delivered_on: nil)
     user = User.create!(
       email: "reader#{SecureRandom.hex(4)}@example.com",

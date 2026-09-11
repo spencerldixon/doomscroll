@@ -101,6 +101,26 @@ RSpec.describe DailyIssueGeneratorJob, type: :job do
     expect(user.zine_preference.reload.last_delivered_on).to eq(Date.current)
   end
 
+  it "delivers via Telegram instead of email when that's the reader's chosen channel" do
+    user = create_user_with_delivery(email: "telegram@example.com", delivery_day: Date.current.wday)
+    user.zine_preference.update!(
+      delivery_method: "telegram",
+      telegram_bot_token: "bot-token",
+      telegram_chat_id: "12345"
+    )
+
+    expect(TelegramNotifier).to receive(:notify).with(
+      a_string_including("issue #1"),
+      token: "bot-token",
+      chat_id: "12345"
+    )
+
+    expect {
+      perform_enqueued_jobs { described_class.perform_now(Date.current) }
+    }.to change(Issue, :count).by(1)
+      .and not_change(ActionMailer::Base.deliveries, :count)
+  end
+
   it "delivers on the first delivery day even when an unscheduled issue exists" do
     user = create_user_with_delivery(email: "seeded@example.com", delivery_day: Date.current.wday)
     user.issues.create!(content: []).update_column(:published_at, 3.days.ago)

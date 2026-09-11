@@ -1,45 +1,31 @@
-<header class="mb-10">
-  <div class="flex flex-col md:grid md:grid-cols-3 items-center bg-neon-green p-4 gap-3 md:gap-0">
+<header class="mb-16 border-b border-border">
+  <div class="flex flex-col md:grid md:grid-cols-3 items-center py-4 gap-3 md:gap-0">
     <%= link_to authenticated_root_path, class: "text-3xl vt" do %>
       doomscroll.press
     <% end %>
 
-    <nav class="vt flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm md:text-base">
-      <%= link_to issues_path do %>
-        Issues
-      <% end %>
-
-      <%= link_to feeds_path do %>
-        Feeds
-      <% end %>
-
-      <%= link_to preferences_path do %>
-        Settings
-      <% end %>
-
-      <%= link_to edit_user_registration_path do %>
-        My Account
-      <% end %>
-
-      <%= button_to destroy_user_session_path, method: :delete, class: "cursor-pointer" do %>
-        Log out
-      <% end %>
+    <% nav_link_class = ->(path) { current_page?(path) ? "text-foreground font-medium border-b-2 border-neon-green pb-0.5" : "text-muted-foreground hover:text-foreground transition-colors" } %>
+    <nav class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
+      <%= link_to "Issues", issues_path, class: nav_link_class.call(issues_path) %>
+      <%= link_to "Feeds", feeds_path, class: nav_link_class.call(feeds_path) %>
+      <%= link_to "Settings", preferences_path, class: nav_link_class.call(preferences_path) %>
+      <%= link_to "My Account", edit_user_registration_path, class: nav_link_class.call(edit_user_registration_path) %>
+      <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "cursor-pointer text-muted-foreground hover:text-foreground transition-colors" %>
     </nav>
 
     <div class="hidden md:flex items-center justify-end gap-3">
-      <div class="flex items-center gap-1.5 font-mono text-xs"
+      <div class="flex items-center gap-1.5 text-xs rounded-full px-3 py-1 bg-neon-green font-mono"
         data-controller="countdown"
         data-countdown-deadline-value="<%= current_user.next_issue_date %>"
         >
-        <span class="">Your next issue in</span>
+        <span>Next issue in</span>
         <span class="flex items-center gap-1">
-          <span data-countdown-target="days" class="tabular-nums">--</span><span class="">d</span>
-          <span data-countdown-target="hours" class="tabular-nums">--</span><span class="">h</span>
-          <span data-countdown-target="minutes" class="tabular-nums">--</span><span class="">m</span>
-          <span data-countdown-target="seconds" class="tabular-nums">--</span><span class="">s</span>
+          <span data-countdown-target="days" class="tabular-nums">--</span><span>d</span>
+          <span data-countdown-target="hours" class="tabular-nums">--</span><span>h</span>
+          <span data-countdown-target="minutes" class="tabular-nums">--</span><span>m</span>
+          <span data-countdown-target="seconds" class="tabular-nums">--</span><span>s</span>
         </span>
       </div>
     </div>
   </div>
-
 </header>

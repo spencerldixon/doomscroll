@@ -1,7 +1,4 @@
-<%= render "shared/header", title: "Preferences", subtitle: "Update your zine settings" do %>
-<% end %>
-
-<div class="max-w-lg mx-auto px-4 space-y-10">
+<div class="max-w-lg mx-auto space-y-10">
   <%= form_with url: preferences_path, method: :patch, class: "space-y-10" do |f| %>
 
     <% if @zine_preference.errors.any? %>
@@ -72,6 +69,8 @@
         <% end %>
       </div>
     </div>
+
+    <%= render "shared/delivery_method_fields", zine_preference: @zine_preference %>
 
     <button type="submit" class="btn">Update</button>
   <% end %>

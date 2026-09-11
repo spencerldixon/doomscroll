@@ -4,20 +4,23 @@
 
 import { application } from "./application"
 
-import FlashController from "./flash_controller"
-application.register("flash", FlashController)
-
-import SelectionController from "./selection_controller"
-application.register("selection", SelectionController)
-
 import ConfettiController from "./confetti_controller"
 application.register("confetti", ConfettiController)
 
 import CountdownController from "./countdown_controller"
 application.register("countdown", CountdownController)
 
-import FilterController from "./filter_controller"
-application.register("filter", FilterController)
+import DeliveryChannelController from "./delivery_channel_controller"
+application.register("delivery-channel", DeliveryChannelController)
 
 import DialogController from "./dialog_controller"
 application.register("dialog", DialogController)
+
+import FilterController from "./filter_controller"
+application.register("filter", FilterController)
+
+import FlashController from "./flash_controller"
+application.register("flash", FlashController)
+
+import SelectionController from "./selection_controller"
+application.register("selection", SelectionController)

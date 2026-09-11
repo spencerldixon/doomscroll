@@ -102,6 +102,39 @@ RSpec.describe "Onboarding", type: :request do
       expect(response.body).to include("Every week", "Every 2 weeks", "Every 4 weeks")
     end
 
+    it "defaults the delivery method to email when the reader doesn't choose one" do
+      put onboarding_path(:delivery), params: { delivery_day: 0, delivery_frequency: "weekly" }
+
+      expect(user.reload.zine_preference.delivery_method).to eq("email")
+    end
+
+    it "saves a Telegram bot token and chat id when Telegram is chosen" do
+      put onboarding_path(:delivery), params: {
+        delivery_day: 0,
+        delivery_frequency: "weekly",
+        delivery_method: "telegram",
+        telegram_bot_token: "bot-token",
+        telegram_chat_id: "12345"
+      }
+
+      expect(response).to redirect_to(onboarding_complete_path)
+      preference = user.reload.zine_preference
+      expect(preference.delivery_method).to eq("telegram")
+      expect(preference.telegram_bot_token).to eq("bot-token")
+      expect(preference.telegram_chat_id).to eq("12345")
+    end
+
+    it "re-renders the step when Telegram is chosen without a bot token or chat id" do
+      put onboarding_path(:delivery), params: {
+        delivery_day: 0,
+        delivery_frequency: "weekly",
+        delivery_method: "telegram"
+      }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(user.reload.zine_preference.delivery_method).to eq("email")
+    end
+
     it "re-renders the step when no delivery day selected" do
       put onboarding_path(:delivery), params: { delivery_frequency: "weekly" }
 

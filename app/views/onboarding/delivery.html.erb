@@ -49,6 +49,10 @@
           <% end %>
         </div>
 
+        <div class="mb-8">
+          <%= render "shared/delivery_method_fields", zine_preference: @zine_preference %>
+        </div>
+
         <div class="flex justify-between">
           <%= link_to "← Back", wizard_path(:feeds), class: "btn-outline" %>
           <button type="submit" class="btn-primary">

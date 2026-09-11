@@ -51,6 +51,9 @@ class OnboardingController < ApplicationController
       @zine_preference = current_user.zine_preference || current_user.build_zine_preference
       @zine_preference.delivery_day = params[:delivery_day]
       @zine_preference.delivery_frequency = params[:delivery_frequency]
+      @zine_preference.delivery_method = params[:delivery_method] if params[:delivery_method].present?
+      @zine_preference.telegram_bot_token = params[:telegram_bot_token] if params[:telegram_bot_token].present?
+      @zine_preference.telegram_chat_id = params[:telegram_chat_id] if params[:telegram_chat_id].present?
 
       if @zine_preference.delivery_day.present? && @zine_preference.delivery_frequency.present? && @zine_preference.save
         redirect_to onboarding_complete_path

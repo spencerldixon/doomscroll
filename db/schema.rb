@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_09_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_11_184506) do
   create_table "feeds", force: :cascade do |t|
     t.string "category"
     t.datetime "created_at", null: false
@@ -202,7 +202,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_09_120000) do
     t.datetime "created_at", null: false
     t.integer "delivery_day"
     t.string "delivery_frequency", default: "weekly", null: false
+    t.string "delivery_method", default: "email", null: false
     t.date "last_delivered_on"
+    t.string "telegram_bot_token"
+    t.string "telegram_chat_id"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.string "zine_name"
