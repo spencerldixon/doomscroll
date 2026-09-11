@@ -7,7 +7,6 @@ RSpec.describe "Issues", type: :request do
         email: "reader@example.com",
         password: "password123",
         password_confirmation: "password123",
-        terms_and_conditions: true,
         confirmed_at: Time.current
       )
       user.create_zine_preference!(zine_name: "Reader Weekly", delivery_day: Date.current.wday)

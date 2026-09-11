@@ -7,7 +7,7 @@ class ZinePreference < ApplicationRecord
     "monthly" => "Every 4 weeks"
   }.freeze
 
-  DELIVERY_METHODS = %w[email telegram].freeze
+  DELIVERY_METHODS = %w[email telegram none].freeze
 
   belongs_to :user
 

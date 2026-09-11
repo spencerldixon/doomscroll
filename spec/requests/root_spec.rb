@@ -11,7 +11,6 @@ RSpec.describe "Root", type: :request do
     User.create!(
       email: "reader@example.com",
       password: "password123",
-      terms_and_conditions: true,
       confirmed_at: Time.current
     )
 

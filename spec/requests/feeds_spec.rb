@@ -6,7 +6,6 @@ RSpec.describe "Feeds", type: :request do
     User.create!(
       email: "feeds@example.com",
       password: "password123",
-      terms_and_conditions: true,
       confirmed_at: Time.current
     )
   end

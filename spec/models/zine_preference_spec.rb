@@ -140,6 +140,13 @@ RSpec.describe ZinePreference, type: :model do
       expect(preference.errors[:delivery_method]).to be_present
     end
 
+    it "allows deferring the choice with none, without requiring any credentials" do
+      preference = build_preference
+      preference.delivery_method = "none"
+
+      expect(preference).to be_valid
+    end
+
     context "when the delivery method is telegram" do
       it "requires a bot token and chat id when the server has none configured" do
         preference = build_preference
@@ -185,7 +192,6 @@ RSpec.describe ZinePreference, type: :model do
       email: "reader#{SecureRandom.hex(4)}@example.com",
       password: "password123",
       password_confirmation: "password123",
-      terms_and_conditions: true,
       confirmed_at: Time.current
     )
 

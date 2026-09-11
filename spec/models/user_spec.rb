@@ -24,7 +24,6 @@ RSpec.describe User, type: :model do
       User.create!(
         email: "reader@example.com",
         password: "password123",
-        terms_and_conditions: true,
         confirmed_at: Time.current
       )
 
@@ -86,7 +85,6 @@ RSpec.describe User, type: :model do
       email: "reader#{SecureRandom.hex(4)}@example.com",
       password: "password123",
       password_confirmation: "password123",
-      terms_and_conditions: true,
       confirmed_at: Time.current
     )
     user.create_zine_preference!(

@@ -9,14 +9,14 @@
 #   end
 return if Rails.env.production?
 
-user = User.find_or_create_by!(email: "test@test.com") do |u|
-  u.password = "test1234"
-  u.password_confirmation = "test1234"
-  u.terms_and_conditions = true
-  u.admin = true
-end
-
-user.confirm unless user.confirmed?
+# user = User.find_or_create_by!(email: "test@test.com") do |u|
+#   u.password = "test1234"
+#   u.password_confirmation = "test1234"
+#   u.terms_and_conditions = true
+#   u.admin = true
+# end
+#
+# user.confirm unless user.confirmed?
 
 feeds = YAML.load_file(Rails.root.join("db", "feeds.yml")).fetch("feeds")
 
@@ -33,4 +33,4 @@ rescue StandardError => e
   Rails.logger.warn "[seeds] skipping feed #{entry["url"]}: #{e.message}"
 end
 
-User.first.issues.create! if User.first.issues.none?
+# User.first.issues.create! if User.first.issues.none?

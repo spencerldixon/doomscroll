@@ -7,9 +7,6 @@ class User < ApplicationRecord
   has_many :feeds, through: :user_feeds
   has_many :issues, dependent: :destroy
 
-  attr_accessor :terms_and_conditions
-
-  validates_acceptance_of :terms_and_conditions, allow_nil: false, on: :create
   validates :email, presence: true, 'valid_email_2/email': true
 
   def self.registration_enabled?

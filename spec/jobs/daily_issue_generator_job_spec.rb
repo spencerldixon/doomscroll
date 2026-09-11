@@ -121,6 +121,40 @@ RSpec.describe DailyIssueGeneratorJob, type: :job do
       .and not_change(ActionMailer::Base.deliveries, :count)
   end
 
+  it "creates the issue but sends nothing for a reader who deferred the choice with no channel configured" do
+    create_user_with_delivery(email: "undecided@example.com", delivery_day: Date.current.wday, delivery_method: "none")
+
+    expect(TelegramNotifier).not_to receive(:notify)
+
+    expect {
+      perform_enqueued_jobs { described_class.perform_now(Date.current) }
+    }.to change(Issue, :count).by(1)
+
+    expect(ActionMailer::Base.deliveries).to be_empty
+  end
+
+  it "delivers via the reader's own Telegram bot once they've added one, despite never picking Telegram explicitly" do
+    user = create_user_with_delivery(email: "undecided-telegram@example.com", delivery_day: Date.current.wday, delivery_method: "none")
+    user.zine_preference.update!(telegram_bot_token: "bot-token", telegram_chat_id: "12345")
+
+    expect(TelegramNotifier).to receive(:notify).with(
+      a_string_including("issue #1"),
+      token: "bot-token",
+      chat_id: "12345"
+    )
+
+    perform_enqueued_jobs { described_class.perform_now(Date.current) }
+  end
+
+  it "delivers via email once the server has SMTP configured, for a reader who deferred the choice" do
+    allow(DeliveryChannels).to receive(:email_available?).and_return(true)
+    create_user_with_delivery(email: "undecided-email@example.com", delivery_day: Date.current.wday, delivery_method: "none")
+
+    expect {
+      perform_enqueued_jobs { described_class.perform_now(Date.current) }
+    }.to change(ActionMailer::Base.deliveries, :count).by(1)
+  end
+
   it "delivers on the first delivery day even when an unscheduled issue exists" do
     user = create_user_with_delivery(email: "seeded@example.com", delivery_day: Date.current.wday)
     user.issues.create!(content: []).update_column(:published_at, 3.days.ago)
@@ -130,12 +164,11 @@ RSpec.describe DailyIssueGeneratorJob, type: :job do
     }.to change(Issue, :count).by(1)
   end
 
-  def create_user_with_delivery(email:, delivery_day:, delivery_frequency: "weekly", last_delivered_on: nil)
+  def create_user_with_delivery(email:, delivery_day:, delivery_frequency: "weekly", last_delivered_on: nil, delivery_method: "email")
     user = User.create!(
       email: email,
       password: "password123",
       password_confirmation: "password123",
-      terms_and_conditions: true,
       confirmed_at: Time.current
     )
 
@@ -143,7 +176,8 @@ RSpec.describe DailyIssueGeneratorJob, type: :job do
       zine_name: "Daily Zine",
       delivery_day: delivery_day,
       delivery_frequency: delivery_frequency,
-      last_delivered_on: last_delivered_on
+      last_delivered_on: last_delivered_on,
+      delivery_method: delivery_method
     )
     feed = Feed.create!(name: "Feed #{email}", url: "https://#{email}/rss.xml")
     user.user_feeds.create!(feed: feed)

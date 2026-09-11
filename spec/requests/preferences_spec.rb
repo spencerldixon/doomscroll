@@ -5,7 +5,6 @@ RSpec.describe "Preferences", type: :request do
     User.create!(
       email: "test@example.com",
       password: "password123",
-      terms_and_conditions: true,
       confirmed_at: Time.current
     )
   end

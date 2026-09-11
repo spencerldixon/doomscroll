@@ -5,7 +5,6 @@ RSpec.describe "Onboarding", type: :request do
     User.create!(
       email: "test@example.com",
       password: "password123",
-      terms_and_conditions: true,
       confirmed_at: Time.current
     )
   end
@@ -62,6 +61,47 @@ RSpec.describe "Onboarding", type: :request do
       get onboarding_complete_path
 
       expect(response.body).to include("Every other Wednesday")
+    end
+
+    it "mentions the inbox when email was chosen" do
+      user.create_zine_preference!(zine_name: "My Zine", delivery_day: 3, delivery_method: "email")
+
+      get onboarding_complete_path
+
+      expect(response.body).to include("inbox at #{user.email}")
+    end
+
+    it "mentions Telegram when that was chosen" do
+      user.create_zine_preference!(
+        zine_name: "My Zine",
+        delivery_day: 3,
+        delivery_method: "telegram",
+        telegram_bot_token: "bot-token",
+        telegram_chat_id: "12345"
+      )
+
+      get onboarding_complete_path
+
+      expect(response.body).to include("on Telegram")
+    end
+
+    it "invites the reader to finish setup later when they deferred and nothing is configured yet" do
+      allow(DeliveryChannels).to receive(:email_available?).and_return(false)
+      allow(DeliveryChannels).to receive(:telegram_available?).and_return(false)
+      user.create_zine_preference!(zine_name: "My Zine", delivery_day: 3, delivery_method: "none")
+
+      get onboarding_complete_path
+
+      expect(response.body).to include("whenever you're ready")
+    end
+
+    it "mentions email when the reader deferred but the server already has SMTP configured" do
+      allow(DeliveryChannels).to receive(:email_available?).and_return(true)
+      user.create_zine_preference!(zine_name: "My Zine", delivery_day: 3, delivery_method: "none")
+
+      get onboarding_complete_path
+
+      expect(response.body).to include("inbox at #{user.email}")
     end
   end
 

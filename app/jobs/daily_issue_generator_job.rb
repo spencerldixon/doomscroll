@@ -36,10 +36,15 @@ class DailyIssueGeneratorJob < ApplicationJob
   end
 
   def deliver(issue, preference)
-    if preference.delivery_method == "telegram"
+    method = preference.delivery_method == "none" ? DeliveryChannels.resolve_undecided(preference) : preference.delivery_method
+
+    case method
+    when "telegram"
       deliver_via_telegram(issue, preference)
-    else
+    when "email"
       IssueMailer.with(issue: issue).daily_issue.deliver_later
+    else
+      Rails.logger.info("DailyIssueGeneratorJob: no delivery channel configured for user #{preference.user_id}, skipping delivery")
     end
   end
 

@@ -5,7 +5,7 @@
     data-controller="selection"
     data-selection-multiple-value="false"
     data-selection-name-value="delivery_method"
-    class="grid grid-cols-2 gap-2"
+    class="grid grid-cols-3 gap-2"
   >
     <input type="hidden" name="delivery_method" value="<%= zine_preference.delivery_method %>" data-selection-target="input">
 
@@ -28,29 +28,52 @@
       <span class="text-sm font-semibold">Telegram</span>
       <span class="text-xs text-muted-foreground"><%= DeliveryChannels.telegram_available? ? "Ready" : "Bring your own bot" %></span>
     </div>
+
+    <div
+      data-selection-target="card"
+      data-id="none"
+      data-action="click->selection#toggle click->delivery-channel#show"
+      class="flex flex-col items-center justify-center gap-1 p-3 border border-border rounded-lg cursor-pointer hover:border-violet-400 transition-all select-none <%= "selected" if zine_preference.delivery_method == "none" %>"
+    >
+      <span class="text-sm font-semibold">I'll set this up later</span>
+      <span class="text-xs text-muted-foreground">No delivery for now</span>
+    </div>
   </div>
 
-  <% unless DeliveryChannels.telegram_available? %>
-    <div
-      data-delivery-channel-target="panel"
-      data-channel="telegram"
-      <%= "hidden" unless zine_preference.delivery_method == "telegram" %>
-      class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1"
-    >
-      <input
-        type="text"
-        name="telegram_bot_token"
-        placeholder="Bot token from @BotFather"
-        value="<%= zine_preference.telegram_bot_token %>"
-        class="w-full input"
-      >
-      <input
-        type="text"
-        name="telegram_chat_id"
-        placeholder="Chat id from @userinfobot"
-        value="<%= zine_preference.telegram_chat_id %>"
-        class="w-full input"
-      >
+  <div
+    data-delivery-channel-target="panel"
+    data-channel="telegram"
+    <%= "hidden" unless zine_preference.delivery_method == "telegram" %>
+    class="space-y-3 pt-1"
+  >
+    <% if DeliveryChannels.telegram_available? %>
+      <p class="text-muted-foreground text-sm">
+        Optional — overrides the server's default bot for your deliveries only. Leave blank to use the server default.
+      </p>
+    <% end %>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div class="flex flex-col gap-3">
+        <label class="label" for="telegram_bot_token">Bot token</label>
+        <input
+          id="telegram_bot_token"
+          type="text"
+          name="telegram_bot_token"
+          placeholder="From @BotFather"
+          value="<%= zine_preference.telegram_bot_token %>"
+          class="w-full input"
+        >
+      </div>
+      <div class="flex flex-col gap-3">
+        <label class="label" for="telegram_chat_id">Chat id</label>
+        <input
+          id="telegram_chat_id"
+          type="text"
+          name="telegram_chat_id"
+          placeholder="From @userinfobot"
+          value="<%= zine_preference.telegram_chat_id %>"
+          class="w-full input"
+        >
+      </div>
     </div>
-  <% end %>
+  </div>
 </div>

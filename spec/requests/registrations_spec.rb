@@ -29,8 +29,7 @@ RSpec.describe "Registrations", type: :request do
         user: {
           email: "new-reader@example.com",
           password: "password123",
-          password_confirmation: "password123",
-          terms_and_conditions: "1"
+          password_confirmation: "password123"
         }
       }
     end.not_to change(User, :count)

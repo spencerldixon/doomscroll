@@ -6,7 +6,6 @@ RSpec.describe Issue, type: :model do
       email: "reader@example.com",
       password: "password123",
       password_confirmation: "password123",
-      terms_and_conditions: true,
       confirmed_at: Time.current
     )
   end

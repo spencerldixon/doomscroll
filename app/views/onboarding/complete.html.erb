@@ -9,12 +9,22 @@
     </h1>
 
     <%# The message %>
+    <% zine_preference = current_user.zine_preference %>
+    <% effective_delivery_method = zine_preference.delivery_method == "none" ? DeliveryChannels.resolve_undecided(zine_preference) : zine_preference.delivery_method %>
     <div class="space-y-2">
       <p class="text-3xl font-semibold leading-snug tracking-tight">
-      <span class="text-lime-400 bg-slate-900 px-2"><%= current_user.delivery_cadence_label %></span> we'll drop your zine in your inbox at <%= current_user.email %>.
+      <span class="text-lime-400 bg-slate-900 px-2"><%= current_user.delivery_cadence_label %></span>
+      <% case effective_delivery_method %>
+      <% when "email" %>
+        we'll drop your zine in your inbox at <%= current_user.email %>.
+      <% when "telegram" %>
+        we'll send your zine to you on Telegram.
+      <% else %>
+        your zine will be waiting for you — add an email or Telegram setup from preferences whenever you're ready.
+      <% end %>
       </p>
       <p class="text-muted-foreground">
-      Print it, fold it, take a photo, send it to us 
+      Print it, fold it, read it offline.
       </p>
     </div>
 
