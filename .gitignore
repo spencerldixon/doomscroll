@@ -7,9 +7,9 @@
 # Ignore bundler config.
 /.bundle
 
-# Track public dotenv defaults, but ignore local overrides.
+# Ignore all dotenv files except the example template.
 /.env*
-!/.env
+!/.env.example
 /.env*.local
 
 # Ignore all logfiles and tempfiles.
