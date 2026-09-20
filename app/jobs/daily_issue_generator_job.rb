@@ -52,7 +52,7 @@ class DailyIssueGeneratorJob < ApplicationJob
     issue_url = Rails.application.routes.url_helpers.issue_url(
       issue,
       token: issue.signed_id(purpose: :issue_print),
-      **Rails.application.config.action_mailer.default_url_options
+      **Rails.application.routes.default_url_options
     )
 
     TelegramNotifier.notify(

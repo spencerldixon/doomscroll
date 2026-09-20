@@ -146,6 +146,23 @@ RSpec.describe DailyIssueGeneratorJob, type: :job do
     perform_enqueued_jobs { described_class.perform_now(Date.current) }
   end
 
+  it "links the Telegram message at the configured host rather than localhost" do
+    user = create_user_with_delivery(email: "telegram-host@example.com", delivery_day: Date.current.wday)
+    user.zine_preference.update!(
+      delivery_method: "telegram",
+      telegram_bot_token: "bot-token",
+      telegram_chat_id: "12345"
+    )
+
+    expect(TelegramNotifier).to receive(:notify).with(
+      a_string_including("://example.com/issues/"),
+      token: "bot-token",
+      chat_id: "12345"
+    )
+
+    perform_enqueued_jobs { described_class.perform_now(Date.current) }
+  end
+
   it "delivers via email once the server has SMTP configured, for a reader who deferred the choice" do
     allow(DeliveryChannels).to receive(:email_available?).and_return(true)
     create_user_with_delivery(email: "undecided-email@example.com", delivery_day: Date.current.wday, delivery_method: "none")
